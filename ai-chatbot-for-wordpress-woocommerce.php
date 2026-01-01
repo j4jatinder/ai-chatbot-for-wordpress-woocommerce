@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: AI Chatbot for WordPress & WooCommerce
-Plugin URI: https://www.phpsoftsolutions.in/wp-rag-ai-chatbot
+Plugin URI: https://www.phpsoftsolutions.in/ai-chatbot-for-wordpress-woocommerce/
 Description: An AI-powered chatbot for WordPress and WooCommerce using Retrieval-Augmented Generation (RAG). Train the chatbot on FAQs, pages, posts, and products, and answer customer queries using OpenAI or Gemini AI models.
 Version: 1.0.0
 Author: Jatinder Singh

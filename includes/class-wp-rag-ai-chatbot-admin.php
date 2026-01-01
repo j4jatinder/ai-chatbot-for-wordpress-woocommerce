@@ -119,8 +119,8 @@ public function add_admin_menu() {
     // We use edit.php?post_type=YOUR_SLUG as the menu slug.
     add_submenu_page(
         'wp-rag-ai-chatbot-settings', // Parent slug: MUST match the slug of add_menu_page above
-        __( 'RAG AI FAQs', 'wp-rag-ai-chatbot' ), // Page title
-        __( 'RAG AI FAQs', 'wp-rag-ai-chatbot' ), // Menu title
+        __( 'AI Chatbot FAQs (RAG)', 'wp-rag-ai-chatbot' ), // Page title
+        __( 'AI Chatbot FAQs (RAG)', 'wp-rag-ai-chatbot' ), // Menu title
         'manage_options',
         'edit.php?post_type=rag_ai_chatbot_faq' // Target link for the CPT list screen
     );
@@ -128,8 +128,8 @@ public function add_admin_menu() {
     // Optional: Add a "Add New FAQ" link directly under the menu as well
     add_submenu_page(
         'wp-rag-ai-chatbot-settings',
-        __( 'Add New RAG AI FAQ', 'wp-rag-ai-chatbot' ),
-        __( 'Add New RAG AI FAQ', 'wp-rag-ai-chatbot' ),
+        __( 'Add New AI Chatbot FAQs', 'wp-rag-ai-chatbot' ),
+        __( 'Add New AI Chatbot FAQs', 'wp-rag-ai-chatbot' ),
         'manage_options',
         'post-new.php?post_type=rag_ai_chatbot_faq'
     );
@@ -142,22 +142,22 @@ public function add_admin_menu() {
  */
 public function register_faq_cpt() {
     $labels = array(
-        'name'                  => _x( 'RAG AI FAQs', 'Post Type General Name', 'wp-rag-ai-chatbot' ),
-        'singular_name'         => _x( 'RAG FAQ', 'Post Type Singular Name', 'wp-rag-ai-chatbot' ),
-        'menu_name'             => __( 'RAG AI FAQs', 'wp-rag-ai-chatbot' ),
+        'name'                  => _x( 'AI Chatbot FAQs (RAG)', 'Post Type General Name', 'wp-rag-ai-chatbot' ),
+        'singular_name'         => _x( 'AI Chatbot FAQs (RAG)', 'Post Type Singular Name', 'wp-rag-ai-chatbot' ),
+        'menu_name'             => __( 'AI Chatbot FAQs (RAG)', 'wp-rag-ai-chatbot' ),
         'name_admin_bar'        => __( 'RAG FAQ', 'wp-rag-ai-chatbot' ),
         'archives'              => __( 'FAQ Archives', 'wp-rag-ai-chatbot' ),
         'attributes'            => __( 'FAQ Attributes', 'wp-rag-ai-chatbot' ),
         'parent_item_colon'     => __( 'Parent FAQ:', 'wp-rag-ai-chatbot' ),
-        'all_items'             => __( 'All RAG AI FAQs', 'wp-rag-ai-chatbot' ),
+        'all_items'             => __( 'All AI Chatbot FAQs (RAG)', 'wp-rag-ai-chatbot' ),
         'add_new_item'          => __( 'Add New RAG AI FAQ', 'wp-rag-ai-chatbot' ),
         'add_new'               => __( 'Add New', 'wp-rag-ai-chatbot' ),
-        'new_item'              => __( 'New FAQ', 'wp-rag-ai-chatbot' ),
-        'edit_item'             => __( 'Edit FAQ', 'wp-rag-ai-chatbot' ),
-        'update_item'           => __( 'Update FAQ', 'wp-rag-ai-chatbot' ),
-        'view_item'             => __( 'View FAQ', 'wp-rag-ai-chatbot' ),
-        'view_items'            => __( 'View FAQs', 'wp-rag-ai-chatbot' ),
-        'search_items'          => __( 'Search FAQs', 'wp-rag-ai-chatbot' ),
+        'new_item'              => __( 'New AI Chatbot FAQ', 'wp-rag-ai-chatbot' ),
+        'edit_item'             => __( 'Edit AI Chatbot FAQ', 'wp-rag-ai-chatbot' ),
+        'update_item'           => __( 'Update AI Chatbot FAQ', 'wp-rag-ai-chatbot' ),
+        'view_item'             => __( 'View AI FAQ', 'wp-rag-ai-chatbot' ),
+        'view_items'            => __( 'View AI FAQs', 'wp-rag-ai-chatbot' ),
+        'search_items'          => __( 'Search AI FAQs', 'wp-rag-ai-chatbot' ),
         'not_found'             => __( 'Not found', 'wp-rag-ai-chatbot' ),
         'not_found_in_trash'    => __( 'Not found in Trash', 'wp-rag-ai-chatbot' ),
         'featured_image'        => __( 'Featured Image', 'wp-rag-ai-chatbot' ),
@@ -344,7 +344,8 @@ public function wp_rag_ai_chatbot_policy_pages_callback() {
             <li class="loading" style="display: none; padding: 5px;"><?php esc_html_e( 'Searching...', 'wp-rag-ai-chatbot' ); ?></li>
         </ul>
 
-        <p class="description"><?php esc_html_e( 'Selected pages will be used as source material for the AI chatbot.', 'wp-rag-ai-chatbot' ); ?></p>
+        <p class="description"><?php esc_html_e( 'Selected pages will be indexed for AI responses.
+Maximum 100 pages. Content is truncated to 1000 words per page.', 'wp-rag-ai-chatbot' ); ?></p>
 
         <div id="rag-selected-policy-pages">
             <h4><?php esc_html_e( 'Currently Selected Pages:', 'wp-rag-ai-chatbot' ); ?></h4>

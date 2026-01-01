@@ -7,7 +7,7 @@
  */
 ?>
 <div class="wrap">
-    <h1><?php esc_html_e( 'WP AI Chatbot Settings', 'wp-rag-ai-chatbot' ); ?></h1>
+    <h1><?php esc_html_e( 'Chatbot Display & Behavior', 'wp-rag-ai-chatbot' ); ?></h1>
 
     <div id="rag-admin-message" class="notice" style="display:none;">
         <p></p>
@@ -33,12 +33,12 @@
                 </td>
             </tr>
         </table>
-        <?php submit_button( __( 'Save Chatbot Settings', 'wp-rag-ai-chatbot' ) ); ?>
+        <?php submit_button( __( 'Save Display Settings', 'wp-rag-ai-chatbot' ) ); ?>
     </form>
 
     <hr>
 
-    <h2><?php esc_html_e( 'Site Integration Status', 'wp-rag-ai-chatbot' ); ?></h2>
+    <h2><?php esc_html_e( 'Site Registration Status', 'wp-rag-ai-chatbot' ); ?></h2>
     <table class="form-table">
         <tr>
             <th scope="row"><?php esc_html_e( 'Site ID', 'wp-rag-ai-chatbot' ); ?></th>
@@ -65,8 +65,8 @@
 
     <hr>
 
-    <h2><?php esc_html_e( 'AI Provider Keys and Configuration', 'wp-rag-ai-chatbot' ); ?></h2>
-    <p class="description">Enter your AI keys and configure the active model. Keys are immediately sent to the RAG Node and **NOT** stored on this server.</p>
+    <h2><?php esc_html_e( 'AI Provider Configuration', 'wp-rag-ai-chatbot' ); ?></h2>
+    <p class="description">Enter your AI keys and configure the active model. Keys are immediately sent to the RAG Node and **NOT** stored in this WordPress database.</p>
     <table class="form-table">
         <tr>
             <th scope="row"><label for="active_provider"><?php esc_html_e( 'Active AI Provider', 'wp-rag-ai-chatbot' ); ?></label></th>
@@ -113,7 +113,7 @@
             <td>
                 <?php $keys_sent_time = get_option( 'wp_rag_ai_chatbot_keys_sent' ); ?>
                 <button id="send-keys-button" class="button button-secondary" <?php echo empty( get_option( 'wp_rag_ai_chatbot_api_key' ) ) ? 'disabled' : ''; ?>>
-                    <?php esc_html_e( '2. Save Config & Send Keys', 'wp-rag-ai-chatbot' ); ?>
+                    <?php esc_html_e( '2. Save AI Settings & Verify', 'wp-rag-ai-chatbot' ); ?>
                 </button>
                 <p class="description">
                     <?php
@@ -130,7 +130,7 @@
 
     <hr>
 
-    <h2><?php esc_html_e( 'Data Synchronization', 'wp-rag-ai-chatbot' ); ?></h2>
+    <h2><?php esc_html_e( 'Content Indexing (RAG)', 'wp-rag-ai-chatbot' ); ?></h2>
     <div class="form-control">
         <?php 
         foreach(['posts' => 'Posts', 'pages' => 'Pages', 'products' => 'Products', 'faqs' => 'FAQs'] as $type => $label): ?>
@@ -143,7 +143,7 @@
     </div>
     <p class="description"><?php esc_html_e( 'Push all selected WordPress content (Posts, Pages, Products, FAQs) to the RAG Node for indexing.', 'wp-rag-ai-chatbot' ); ?></p>
     <button id="data-push-button" class="button button-hero" <?php echo empty( get_option( 'wp_rag_ai_chatbot_api_key' ) ) ? 'disabled' : ''; ?>>
-        3. Push All Site Data Now
+        3. Index Selected Content/Data Now
     </button>
 
 </div>

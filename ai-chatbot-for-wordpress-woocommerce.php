@@ -8,7 +8,7 @@ Author: Jatinder Singh
 Author URI: https://www.phpsoftsolutions.in
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: wp-rag-ai-chatbot
+Text Domain: ai-chatbot-for-wordpress-woocommerce
 */
 
 

@@ -93,8 +93,8 @@ class WP_RAG_AI_Chatbot_Admin {
             'ajax_url' => admin_url( 'admin-ajax.php' ),
             'nonce'    => wp_create_nonce( 'rag-page-search-nonce' ),
             'i18n'     => array(
-                'no_pages_selected' => __( 'No pages selected yet.', 'wp-rag-ai-chatbot' ),
-                'no_results'        => __( 'No results found.', 'wp-rag-ai-chatbot' ),
+                'no_pages_selected' => __( 'No pages selected yet.', 'ai-chatbot-for-wordpress-woocommerce' ),
+                'no_results'        => __( 'No results found.', 'ai-chatbot-for-wordpress-woocommerce' ),
             ),
         ) );
     // Now, call your CSS function, which should be renamed/refactored
@@ -106,8 +106,8 @@ class WP_RAG_AI_Chatbot_Admin {
 public function add_admin_menu() {
     // Add top-level menu item (Settings Page)
     add_menu_page(
-        __( 'WP AI Chatbot Settings', 'wp-rag-ai-chatbot' ),
-        __( 'WP AI Chatbot', 'wp-rag-ai-chatbot' ),
+        __( 'WP AI Chatbot Settings', 'ai-chatbot-for-wordpress-woocommerce' ),
+        __( 'WP AI Chatbot', 'ai-chatbot-for-wordpress-woocommerce' ),
         'manage_options',
         'wp-rag-ai-chatbot-settings', // The parent slug
         array( $this, 'settings_page_html' ),
@@ -119,8 +119,8 @@ public function add_admin_menu() {
     // We use edit.php?post_type=YOUR_SLUG as the menu slug.
     add_submenu_page(
         'wp-rag-ai-chatbot-settings', // Parent slug: MUST match the slug of add_menu_page above
-        __( 'AI Chatbot FAQs (RAG)', 'wp-rag-ai-chatbot' ), // Page title
-        __( 'AI Chatbot FAQs (RAG)', 'wp-rag-ai-chatbot' ), // Menu title
+        __( 'AI Chatbot FAQs (RAG)', 'ai-chatbot-for-wordpress-woocommerce' ), // Page title
+        __( 'AI Chatbot FAQs (RAG)', 'ai-chatbot-for-wordpress-woocommerce' ), // Menu title
         'manage_options',
         'edit.php?post_type=rag_ai_chatbot_faq' // Target link for the CPT list screen
     );
@@ -128,8 +128,8 @@ public function add_admin_menu() {
     // Optional: Add a "Add New FAQ" link directly under the menu as well
     add_submenu_page(
         'wp-rag-ai-chatbot-settings',
-        __( 'Add New AI Chatbot FAQs', 'wp-rag-ai-chatbot' ),
-        __( 'Add New AI Chatbot FAQs', 'wp-rag-ai-chatbot' ),
+        __( 'Add New AI Chatbot FAQ', 'ai-chatbot-for-wordpress-woocommerce' ),
+        __( 'Add New AI Chatbot FAQ', 'ai-chatbot-for-wordpress-woocommerce' ),
         'manage_options',
         'post-new.php?post_type=rag_ai_chatbot_faq'
     );
@@ -142,37 +142,37 @@ public function add_admin_menu() {
  */
 public function register_faq_cpt() {
     $labels = array(
-        'name'                  => _x( 'AI Chatbot FAQs (RAG)', 'Post Type General Name', 'wp-rag-ai-chatbot' ),
-        'singular_name'         => _x( 'AI Chatbot FAQs (RAG)', 'Post Type Singular Name', 'wp-rag-ai-chatbot' ),
-        'menu_name'             => __( 'AI Chatbot FAQs (RAG)', 'wp-rag-ai-chatbot' ),
-        'name_admin_bar'        => __( 'RAG FAQ', 'wp-rag-ai-chatbot' ),
-        'archives'              => __( 'FAQ Archives', 'wp-rag-ai-chatbot' ),
-        'attributes'            => __( 'FAQ Attributes', 'wp-rag-ai-chatbot' ),
-        'parent_item_colon'     => __( 'Parent FAQ:', 'wp-rag-ai-chatbot' ),
-        'all_items'             => __( 'All AI Chatbot FAQs (RAG)', 'wp-rag-ai-chatbot' ),
-        'add_new_item'          => __( 'Add New RAG AI FAQ', 'wp-rag-ai-chatbot' ),
-        'add_new'               => __( 'Add New', 'wp-rag-ai-chatbot' ),
-        'new_item'              => __( 'New AI Chatbot FAQ', 'wp-rag-ai-chatbot' ),
-        'edit_item'             => __( 'Edit AI Chatbot FAQ', 'wp-rag-ai-chatbot' ),
-        'update_item'           => __( 'Update AI Chatbot FAQ', 'wp-rag-ai-chatbot' ),
-        'view_item'             => __( 'View AI FAQ', 'wp-rag-ai-chatbot' ),
-        'view_items'            => __( 'View AI FAQs', 'wp-rag-ai-chatbot' ),
-        'search_items'          => __( 'Search AI FAQs', 'wp-rag-ai-chatbot' ),
-        'not_found'             => __( 'Not found', 'wp-rag-ai-chatbot' ),
-        'not_found_in_trash'    => __( 'Not found in Trash', 'wp-rag-ai-chatbot' ),
-        'featured_image'        => __( 'Featured Image', 'wp-rag-ai-chatbot' ),
-        'set_featured_image'    => __( 'Set featured image', 'wp-rag-ai-chatbot' ),
-        'remove_featured_image' => __( 'Remove featured image', 'wp-rag-ai-chatbot' ),
-        'use_featured_image'    => __( 'Use as featured image', 'wp-rag-ai-chatbot' ),
-        'insert_into_item'      => __( 'Insert into FAQ', 'wp-rag-ai-chatbot' ),
-        'uploaded_to_this_item' => __( 'Uploaded to this FAQ', 'wp-rag-ai-chatbot' ),
-        'items_list'            => __( 'FAQs list', 'wp-rag-ai-chatbot' ),
-        'items_list_navigation' => __( 'FAQs list navigation', 'wp-rag-ai-chatbot' ),
-        'filter_items_list'     => __( 'Filter FAQs list', 'wp-rag-ai-chatbot' ),
+        'name'                  => _x( 'AI Chatbot FAQs (RAG)', 'Post Type General Name', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'singular_name'         => _x( 'AI Chatbot FAQs (RAG)', 'Post Type Singular Name', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'menu_name'             => __( 'AI Chatbot FAQs (RAG)', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'name_admin_bar'        => __( 'RAG FAQ', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'archives'              => __( 'FAQ Archives', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'attributes'            => __( 'FAQ Attributes', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'parent_item_colon'     => __( 'Parent FAQ:', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'all_items'             => __( 'All AI Chatbot FAQs (RAG)', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'add_new_item'          => __( 'Add New RAG AI FAQ', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'add_new'               => __( 'Add New', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'new_item'              => __( 'New AI Chatbot FAQ', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'edit_item'             => __( 'Edit AI Chatbot FAQ', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'update_item'           => __( 'Update AI Chatbot FAQ', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'view_item'             => __( 'View AI FAQ', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'view_items'            => __( 'View AI FAQs', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'search_items'          => __( 'Search AI FAQs', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'not_found'             => __( 'Not found', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'not_found_in_trash'    => __( 'Not found in Trash', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'featured_image'        => __( 'Featured Image', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'set_featured_image'    => __( 'Set featured image', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'remove_featured_image' => __( 'Remove featured image', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'use_featured_image'    => __( 'Use as featured image', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'insert_into_item'      => __( 'Insert into FAQ', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'uploaded_to_this_item' => __( 'Uploaded to this FAQ', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'items_list'            => __( 'FAQs list', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'items_list_navigation' => __( 'FAQs list navigation', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'filter_items_list'     => __( 'Filter FAQs list', 'ai-chatbot-for-wordpress-woocommerce' ),
     );
     $args = array(
-        'label'                 => __( 'RAG AI FAQ', 'wp-rag-ai-chatbot' ),
-        'description'           => __( 'Questions and answers to feed to the RAG AI model.', 'wp-rag-ai-chatbot' ),
+        'label'                 => __( 'RAG AI FAQ', 'ai-chatbot-for-wordpress-woocommerce' ),
+        'description'           => __( 'Questions and answers to feed to the RAG AI model.', 'ai-chatbot-for-wordpress-woocommerce' ),
         'labels'                => $labels,
         'supports'              => array( 'title', 'editor' ), // Title is 'question', Editor is 'answer'
         'hierarchical'          => false,
@@ -202,7 +202,7 @@ public function register_faq_cpt() {
         // Define a settings section
         add_settings_section(
             'wp_rag_ai_chatbot_main_section',
-            __( 'WP AI Chatbot Settings', 'wp-rag-ai-chatbot' ),
+            __( 'WP AI Chatbot Settings', 'ai-chatbot-for-wordpress-woocommerce' ),
             array( $this, 'main_settings_section_callback' ),
             'wp-rag-ai-chatbot-settings'
         );
@@ -253,7 +253,7 @@ public function register_faq_cpt() {
 
         add_settings_field(
             'wp_rag_ai_chatbot_current_status_field',
-            __( 'Enable/Disable on Frontend', 'wp-rag-ai-chatbot' ),
+            __( 'Enable/Disable on Frontend', 'ai-chatbot-for-wordpress-woocommerce' ),
             array( $this, 'wp_rag_ai_switch_status_callback' ),
             'wp-rag-ai-chatbot-settings',
             'wp_rag_ai_chatbot_main_section',
@@ -263,7 +263,7 @@ public function register_faq_cpt() {
         );
         add_settings_field(
             'wp_rag_ai_chatbot_policy_pages_field',
-            __( 'Pages for RAG', 'wp-rag-ai-chatbot' ),
+            __( 'Pages for RAG', 'ai-chatbot-for-wordpress-woocommerce' ),
             array( $this, 'wp_rag_ai_chatbot_policy_pages_callback' ),
             'wp-rag-ai-chatbot-settings',
             'wp_rag_ai_chatbot_main_section'
@@ -271,7 +271,7 @@ public function register_faq_cpt() {
         );
          add_settings_field(
             'wp_rag_ai_chatbot_chatbot_title_field',
-            __( 'Chatbot Widget Title', 'wp-rag-ai-chatbot' ),
+            __( 'Chatbot Widget Title', 'ai-chatbot-for-wordpress-woocommerce' ),
             array( $this, 'wp_rag_ai_chatbot_chatbot_title_callback' ),
             'wp-rag-ai-chatbot-settings',
             'wp_rag_ai_chatbot_main_section'
@@ -338,17 +338,17 @@ public function wp_rag_ai_chatbot_policy_pages_callback() {
     ?>
     <div id="rag-policy-pages-selector">
         
-        <input type="text" id="rag-page-search" placeholder="<?php esc_attr_e( 'Type to search for a page...', 'wp-rag-ai-chatbot' ); ?>" style="width: 100%; max-width: 400px;" />
+        <input type="text" id="rag-page-search" placeholder="<?php esc_attr_e( 'Type to search for a page...', 'ai-chatbot-for-wordpress-woocommerce' ); ?>" style="width: 100%; max-width: 400px;" />
         
         <ul id="rag-page-search-results" style="border: 1px solid #ccc; max-height: 150px; overflow-y: auto; list-style: none; padding: 5px; margin-top: 5px; background: #fff; display: none;">
-            <li class="loading" style="display: none; padding: 5px;"><?php esc_html_e( 'Searching...', 'wp-rag-ai-chatbot' ); ?></li>
+            <li class="loading" style="display: none; padding: 5px;"><?php esc_html_e( 'Searching...', 'ai-chatbot-for-wordpress-woocommerce' ); ?></li>
         </ul>
 
         <p class="description"><?php esc_html_e( 'Selected pages will be indexed for AI responses.
-Maximum 100 pages. Content is truncated to 1000 words per page.', 'wp-rag-ai-chatbot' ); ?></p>
+Maximum 100 pages. Content is truncated to 1000 words per page.', 'ai-chatbot-for-wordpress-woocommerce' ); ?></p>
 
         <div id="rag-selected-policy-pages">
-            <h4><?php esc_html_e( 'Currently Selected Pages:', 'wp-rag-ai-chatbot' ); ?></h4>
+            <h4><?php esc_html_e( 'Currently Selected Pages:', 'ai-chatbot-for-wordpress-woocommerce' ); ?></h4>
             <ul id="rag-selected-pages-list" class="rag-token-list" style="list-style: none; padding: 0;">
                 <?php
                 if ( ! empty( $selected_page_ids ) ) {
@@ -360,7 +360,7 @@ Maximum 100 pages. Content is truncated to 1000 words per page.', 'wp-rag-ai-cha
                                 <?php echo esc_html( $page_title ); ?> 
                                 <input type="hidden" name="wp_rag_ai_chatbot_policy_pages[]" value="<?php echo esc_attr( $page_id ); ?>" />
                                 
-                                <button type="button" class="rag-remove-page rag-icon-remove" data-page-id="<?php echo esc_attr( $page_id ); ?>" title="<?php esc_attr_e( 'Remove Page', 'wp-rag-ai-chatbot' ); ?>">
+                                <button type="button" class="rag-remove-page rag-icon-remove" data-page-id="<?php echo esc_attr( $page_id ); ?>" title="<?php esc_attr_e( 'Remove Page', 'ai-chatbot-for-wordpress-woocommerce' ); ?>">
                                     <span class="dashicons dashicons-no-alt"></span>
                                 </button>
                             </li>
@@ -474,10 +474,10 @@ public function wp_rag_ai_chatbot_show_domain_notice() {
     }
 
     echo '<div class="notice notice-info is-dismissible wp-rag-ai-chatbot-domain-notice">';
-    echo '<p><strong>' . esc_html__( 'WP AI Chatbot', 'wp-rag-ai-chatbot' ) . '</strong></p>';
+    echo '<p><strong>' . esc_html__( 'WP AI Chatbot', 'ai-chatbot-for-wordpress-woocommerce' ) . '</strong></p>';
     echo '<p>' . esc_html__(
         'This plugin requires a publicly accessible HTTPS domain. Localhost and local development environments are not supported.',
-        'wp-rag-ai-chatbot'
+        'ai-chatbot-for-wordpress-woocommerce'
     ) . '</p>';
     echo '</div>';
 }
@@ -506,12 +506,12 @@ public function dismiss_domain_notice() {
     public function wp_rag_ai_chatbot_chatbot_title_callback() {
         $chatbot_title = get_option( 'wp_rag_ai_chatbot_chatbot_title', 'AI Chatbot' );
         echo '<input type="text" id="wp_rag_ai_chatbot_chatbot_title" name="wp_rag_ai_chatbot_chatbot_title" value="' . esc_attr( $chatbot_title ) . '" class="regular-text" />';
-        echo '<p class="description">' . esc_html__( 'The title displayed on the chatbot widget header.', 'wp-rag-ai-chatbot' ) . '</p>';
+        echo '<p class="description">' . esc_html__( 'The title displayed on the chatbot widget header.', 'ai-chatbot-for-wordpress-woocommerce' ) . '</p>';
     }
     public function node_url_field_callback() {
         $node_url = get_option( 'wp_rag_ai_chatbot_node_url', 'https://your-rag-node.com/' );
         echo '<input type="url" id="wp_rag_ai_chatbot_node_url" name="wp_rag_ai_chatbot_node_url" value="' . esc_attr( $node_url ) . '" class="regular-text" required />';
-        echo '<p class="description">' . esc_html__( 'The base URL of your RAG AI Chatbot Node Server.', 'wp-rag-ai-chatbot' ) . '</p>';
+        echo '<p class="description">' . esc_html__( 'The base URL of your RAG AI Chatbot Node Server.', 'ai-chatbot-for-wordpress-woocommerce' ) . '</p>';
     }
 
     public function settings_page_html() {

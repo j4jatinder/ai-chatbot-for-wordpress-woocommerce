@@ -7,7 +7,7 @@
  */
 ?>
 <div class="wrap">
-    <h1><?php esc_html_e( 'Chatbot Display & Behavior', 'wp-rag-ai-chatbot' ); ?></h1>
+    <h1><?php esc_html_e( 'Chatbot Display & Behavior', 'ai-chatbot-for-wordpress-woocommerce' ); ?></h1>
 
     <div id="rag-admin-message" class="notice" style="display:none;">
         <p></p>
@@ -22,105 +22,117 @@
         ?>
         <table class="form-table">
             <tr>
-                <th scope="row"><label for="wp_rag_ai_chatbot_chat_position"><?php esc_html_e( 'Chat Position', 'wp-rag-ai-chatbot' ); ?></label></th>
+                <th scope="row"><label for="wp_rag_ai_chatbot_chat_position"><?php esc_html_e( 'Chat Position', 'ai-chatbot-for-wordpress-woocommerce' ); ?></label></th>
                 <td>
                     <?php $chat_position = get_option( 'wp_rag_ai_chatbot_chat_position', 'bottom-right' ); ?>
                     <select name="wp_rag_ai_chatbot_chat_position" id="wp_rag_ai_chatbot_chat_position">
                         <option value="bottom-right" <?php selected( $chat_position, 'bottom-right' ); ?>>Bottom Right</option>
                         <option value="bottom-left" <?php selected( $chat_position, 'bottom-left' ); ?>>Bottom Left</option>
                     </select>
-                    <p class="description"><?php esc_html_e( 'Where the chatbot icon will appear on the frontend.', 'wp-rag-ai-chatbot' ); ?></p>
+                    <p class="description"><?php esc_html_e( 'Where the chatbot icon will appear on the frontend.', 'ai-chatbot-for-wordpress-woocommerce' ); ?></p>
                 </td>
             </tr>
         </table>
-        <?php submit_button( __( 'Save Display Settings', 'wp-rag-ai-chatbot' ) ); ?>
+        <?php submit_button( __( 'Save Display Settings', 'ai-chatbot-for-wordpress-woocommerce' ) ); ?>
     </form>
 
     <hr>
 
-    <h2><?php esc_html_e( 'Site Registration Status', 'wp-rag-ai-chatbot' ); ?></h2>
+    <h2><?php esc_html_e( 'Site Registration Status', 'ai-chatbot-for-wordpress-woocommerce' ); ?></h2>
     <table class="form-table">
         <tr>
-            <th scope="row"><?php esc_html_e( 'Site ID', 'wp-rag-ai-chatbot' ); ?></th>
+            <th scope="row"><?php esc_html_e( 'Site ID', 'ai-chatbot-for-wordpress-woocommerce' ); ?></th>
             <td>
                 <code id="site-id-display"><?php echo esc_html( get_option( 'wp_rag_ai_chatbot_site_id', 'N/A' ) ); ?></code>
             </td>
         </tr>
         <tr>
-            <th scope="row"><?php esc_html_e( 'API Key', 'wp-rag-ai-chatbot' ); ?></th>
+            <th scope="row"><?php esc_html_e( 'API Key', 'ai-chatbot-for-wordpress-woocommerce' ); ?></th>
             <td>
                 <code id="api-key-display"><?php echo esc_html( get_option( 'wp_rag_ai_chatbot_api_key', 'N/A' ) ); ?></code>
             </td>
         </tr>
         <tr>
-            <th scope="row"><?php esc_html_e( 'Registration Status', 'wp-rag-ai-chatbot' ); ?></th>
+            <th scope="row"><?php esc_html_e( 'Registration Status', 'ai-chatbot-for-wordpress-woocommerce' ); ?></th>
             <td>
                 <button id="site-register-button" class="button button-primary" <?php echo get_option( 'wp_rag_ai_chatbot_api_key' ) ? 'disabled' : ''; ?>>
                     <?php echo get_option( 'wp_rag_ai_chatbot_api_key' ) ? 'Site Registered' : '1. Register Site'; ?>
                 </button>
-                <p class="description"><?php esc_html_e( 'Registers this WordPress site with the RAG Node to get the Site ID and API Key.', 'wp-rag-ai-chatbot' ); ?></p>
+                <p class="description"><?php esc_html_e( 'Registers this WordPress site with the RAG Node to get the Site ID and API Key.', 'ai-chatbot-for-wordpress-woocommerce' ); ?></p>
             </td>
         </tr>
     </table>
 
     <hr>
 
-    <h2><?php esc_html_e( 'AI Provider Configuration', 'wp-rag-ai-chatbot' ); ?></h2>
+    <h2><?php esc_html_e( 'AI Provider Configuration', 'ai-chatbot-for-wordpress-woocommerce' ); ?></h2>
     <p class="description">Enter your AI keys and configure the active model. Keys are immediately sent to the RAG Node and **NOT** stored in this WordPress database.</p>
     <table class="form-table">
         <tr>
-            <th scope="row"><label for="active_provider"><?php esc_html_e( 'Active AI Provider', 'wp-rag-ai-chatbot' ); ?></label></th>
+            <th scope="row"><label for="active_provider"><?php esc_html_e( 'Active AI Provider', 'ai-chatbot-for-wordpress-woocommerce' ); ?></label></th>
             <td>
                 <?php $active_provider = get_option( 'wp_rag_ai_chatbot_active_provider', 'gemini' ); ?>
                 <select id="active_provider">
                     <option value="gemini" <?php selected( $active_provider, 'gemini' ); ?>>Google Gemini</option>
                     <option value="openai" <?php selected( $active_provider, 'openai' ); ?>>OpenAI</option>
                 </select>
-                <p class="description"><?php esc_html_e( 'Select the primary provider the chatbot should use.', 'wp-rag-ai-chatbot' ); ?></p>
+                <p class="description"><?php esc_html_e( 'Select the primary provider the chatbot should use.', 'ai-chatbot-for-wordpress-woocommerce' ); ?></p>
             </td>
         </tr>
 
         <tr>
             <th scope="row"><label for="openai_key">OpenAI API Key</label></th>
             <td><input type="password" id="openai_key" class="regular-text" placeholder="sk-..." value="">
-        <p class="hint">We are not storing theses keys into DB, its directly going to Chat Server.</p></td>
+        <p class="hint">We are not storing theses keys into DB, its directly going to Chat Server.</p>
+    <a href="https://platform.openai.com/api-keys"
+		   target="_blank"
+		   rel="noopener noreferrer">
+			<?php esc_html_e( 'Get OpenAI API Key', 'ai-chatbot-for-wordpress-woocommerce' ); ?>
+		</a>
+    </td>
         </tr>
         <tr>
             <th scope="row"><label for="openai_model">OpenAI Model</label></th>
             <td>
                 <?php $openai_model = get_option( 'wp_rag_ai_chatbot_openai_model', 'gpt-4-turbo' ); ?>
                 <input type="text" id="openai_model" value="<?php echo esc_attr( $openai_model ); ?>" class="regular-text" placeholder="gpt-4-turbo" />
-                <p class="description"><?php esc_html_e( 'Specify the OpenAI model to use (e.g., gpt-4-turbo or gpt-3.5-turbo).', 'wp-rag-ai-chatbot' ); ?></p>
+                <p class="description"><?php esc_html_e( 'Specify the OpenAI model to use (e.g., gpt-4-turbo or gpt-3.5-turbo).', 'ai-chatbot-for-wordpress-woocommerce' ); ?></p>
             </td>
         </tr>
 
         <tr>
             <th scope="row"><label for="gemini_key">Gemini API Key</label></th>
             <td><input type="password" id="gemini_key" class="regular-text" placeholder="AIza..." value="">
-        <p class="hint">We are not storing theses keys into DB, its directly going to Chat Server.</p></td>
+        <p class="hint">We are not storing theses keys into DB, its directly going to Chat Server.</p>
+    <a href="https://aistudio.google.com/app/apikey"
+		   target="_blank"
+		   rel="noopener noreferrer">
+			<?php esc_html_e( 'Get Google Gemini API Key', 'ai-chatbot-for-wordpress-woocommerce' ); ?>
+		</a>
+    </td>
         </tr>
         <tr>
             <th scope="row"><label for="gemini_model">Gemini Model</label></th>
             <td>
                 <?php $gemini_model = get_option( 'wp_rag_ai_chatbot_gemini_model', 'gemini-2.5-flash-preview-09-2025' ); ?>
                 <input type="text" id="gemini_model" value="<?php echo esc_attr( $gemini_model ); ?>" class="regular-text" placeholder="gemini-2.5-flash-preview-09-2025" />
-                <p class="description"><?php esc_html_e( 'Specify the Gemini model to use (e.g., gemini-2.5-flash-preview-09-2025).', 'wp-rag-ai-chatbot' ); ?></p>
+                <p class="description"><?php esc_html_e( 'Specify the Gemini model to use (e.g., gemini-2.5-flash-preview-09-2025).', 'ai-chatbot-for-wordpress-woocommerce' ); ?></p>
             </td>
         </tr>
         
         <tr>
-            <th scope="row"><?php esc_html_e( 'Key & Config Action', 'wp-rag-ai-chatbot' ); ?></th>
+            <th scope="row"><?php esc_html_e( 'Key & Config Action', 'ai-chatbot-for-wordpress-woocommerce' ); ?></th>
             <td>
                 <?php $keys_sent_time = get_option( 'wp_rag_ai_chatbot_keys_sent' ); ?>
                 <button id="send-keys-button" class="button button-secondary" <?php echo empty( get_option( 'wp_rag_ai_chatbot_api_key' ) ) ? 'disabled' : ''; ?>>
-                    <?php esc_html_e( '2. Save AI Settings & Verify', 'wp-rag-ai-chatbot' ); ?>
+                    <?php esc_html_e( '2. Save AI Settings & Verify', 'ai-chatbot-for-wordpress-woocommerce' ); ?>
                 </button>
                 <p class="description">
                     <?php
                     if ( $keys_sent_time ) {
                         echo 'Last successful config/key transmission: ' . esc_html( human_time_diff( $keys_sent_time ) ) . ' ago.';
                     } else {
-                        esc_html_e( 'Keys and configuration have not been sent yet.', 'wp-rag-ai-chatbot' );
+                        esc_html_e( 'Keys and configuration have not been sent yet.', 'ai-chatbot-for-wordpress-woocommerce' );
                     }
                     ?>
                 </p>
@@ -130,7 +142,7 @@
 
     <hr>
 
-    <h2><?php esc_html_e( 'Content Indexing (RAG)', 'wp-rag-ai-chatbot' ); ?></h2>
+    <h2><?php esc_html_e( 'Content Indexing (RAG)', 'ai-chatbot-for-wordpress-woocommerce' ); ?></h2>
     <div class="form-control">
         <?php 
         foreach(['posts' => 'Posts', 'pages' => 'Pages', 'products' => 'Products', 'faqs' => 'FAQs'] as $type => $label): ?>
@@ -141,7 +153,7 @@
             </div>
         <?php endforeach; ?>
     </div>
-    <p class="description"><?php esc_html_e( 'Push all selected WordPress content (Posts, Pages, Products, FAQs) to the RAG Node for indexing.', 'wp-rag-ai-chatbot' ); ?></p>
+    <p class="description"><?php esc_html_e( 'Push all selected WordPress content (Posts, Pages, Products, FAQs) to the RAG Node for indexing.', 'ai-chatbot-for-wordpress-woocommerce' ); ?></p>
     <button id="data-push-button" class="button button-hero" <?php echo empty( get_option( 'wp_rag_ai_chatbot_api_key' ) ) ? 'disabled' : ''; ?>>
         3. Index Selected Content/Data Now
     </button>

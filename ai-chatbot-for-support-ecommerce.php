@@ -47,11 +47,13 @@ add_action( 'plugins_loaded', 'wp_rag_ai_chatbot_init' );
 register_activation_hook( __FILE__, function () {
     // Register CPT before flushing
     WP_RAG_AI_Chatbot_Admin::instance()->register_faq_cpt();
+    WP_RAG_AI_Chatbot_Admin::instance()->wp_rag_ai_create_chatbot_tag();
     flush_rewrite_rules();
 });
 register_deactivation_hook( __FILE__, function () {
     flush_rewrite_rules();
 });
+
 
 
 ?>

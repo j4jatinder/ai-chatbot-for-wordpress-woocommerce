@@ -547,6 +547,29 @@ public function dismiss_domain_notice() {
     wp_send_json_success();
 }
 
+/**
+ * Creates the "AI Chatbot Content" tag if it does not already exist.
+ */
+public function wp_rag_ai_create_chatbot_tag() {
+    $tag_name = 'AI Chatbot Content';
+    $taxonomy = 'post_tag';
+
+    // 1. Check if the term already exists to avoid duplicates
+    // Since WP 6.0, term_exists results are cached for better performance.
+    if ( ! term_exists( $tag_name, $taxonomy ) ) {
+        
+        // 2. Insert the term into the post_tag taxonomy
+        wp_insert_term(
+            $tag_name, 
+            $taxonomy,
+            array(
+                'description' => 'Posts to train AI Chatbot responses.',
+                'slug'        => 'ai-chatbot-content'
+            )
+        );
+    }
+}
+
 
     public function main_settings_section_callback() {
       //  echo '<p class="notice notice-info">' . esc_html__( 'Note: Note: This plugin requires a publicly accessible HTTPS domain. Localhost and local development environments are not supported.' ) . '</p>';
@@ -943,7 +966,7 @@ $posted_data_types = isset( $_POST['data_types'] )
         $args = array(
             'post_type'      => 'page',
             'post_status'    => 'publish',
-            'posts_per_page' => -1,
+            'posts_per_page' => 100,
         );
 
         // --- 2. Build Efficient WP_Query ---
@@ -1018,7 +1041,7 @@ $posted_data_types = isset( $_POST['data_types'] )
 
         $products_data = [];
         $products = wc_get_products( array(
-            'limit'  => 100, // Limit to 500 to prevent massive memory usage
+            'limit'  => 100, // Limit to 100 to prevent massive memory usage
             'status' => 'publish',
             'return' => 'objects'
         ) );
@@ -1060,7 +1083,7 @@ $posted_data_types = isset( $_POST['data_types'] )
     private function fetch_rag_ai_content_posts() {
         
         $rag_content_data = [];
-        $rag_term_slug = 'rag_ai_content';
+        $rag_term_slug = 'ai-chatbot-content';
 
 $args = array(
     'post_type'              => 'post',
@@ -1071,18 +1094,11 @@ $args = array(
     'update_post_meta_cache' => false,
     'update_post_term_cache' => false,
     'tax_query'              => array(
-        'relation' => 'OR',
-        array(
-            'taxonomy'         => 'category',
-            'field'            => 'slug',
-            'terms'            => $rag_term_slug,
-            'include_children' => false, // Critical optimization
-        ),
         array(
             'taxonomy'         => 'post_tag',
             'field'            => 'slug',
             'terms'            => $rag_term_slug,
-            'include_children' => false, // Critical optimization
+            'include_children' => false, 
         ),
     ),
 );

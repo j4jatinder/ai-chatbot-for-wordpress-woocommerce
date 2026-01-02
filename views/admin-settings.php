@@ -97,7 +97,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
             <th scope="row"><label for="openai_model">OpenAI Model</label></th>
             <td>
                 <?php $openai_model = get_option( 'wp_rag_ai_chatbot_openai_model', 'gpt-5-nano' ); ?>
-                <input type="text" id="openai_model" value="<?php echo esc_attr( $openai_model ); ?>" class="regular-text" placeholder="gpt-4-turbo" />
+                <input type="text" id="openai_model" value="<?php echo esc_attr( $openai_model ); ?>" class="regular-text" placeholder="gpt-5-nano" />
                 <p class="description"><?php esc_html_e( 'Specify the OpenAI model to use (e.g., gpt-5-nano or gpt-5-mini).', 'ai-chatbot-for-support-ecommerce' ); ?></p>
             </td>
         </tr>
@@ -147,7 +147,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
     <h2><?php esc_html_e( 'Content Indexing (RAG)', 'ai-chatbot-for-support-ecommerce' ); ?></h2>
     <div class="form-control">
         <?php 
-        foreach(['posts' => 'Posts', 'pages' => 'Pages', 'products' => 'Products', 'faqs' => 'FAQs'] as $type => $label): ?>
+        foreach([ 'pages' => 'Pages(Selected Above)', 'faqs' => 'AI Chatbot FAQs','posts' => 'Posts(With tag "AI Chatbot Content")','products' => 'Products'] as $type => $label): ?>
 
             <div>
                 <input type="checkbox" id="data_push_<?php echo esc_attr( $type ); ?>" name="wp_rag_ai_chatbot_data_push_types[]" value="<?php echo esc_attr( $type ); ?>" <?php checked( in_array( $type, (array) get_option( 'wp_rag_ai_chatbot_data_push_types', [] ) ) ); ?> />

@@ -96,9 +96,9 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
         <tr>
             <th scope="row"><label for="openai_model">OpenAI Model</label></th>
             <td>
-                <?php $openai_model = get_option( 'wp_rag_ai_chatbot_openai_model', 'gpt-4-turbo' ); ?>
+                <?php $openai_model = get_option( 'wp_rag_ai_chatbot_openai_model', 'gpt-5-nano' ); ?>
                 <input type="text" id="openai_model" value="<?php echo esc_attr( $openai_model ); ?>" class="regular-text" placeholder="gpt-4-turbo" />
-                <p class="description"><?php esc_html_e( 'Specify the OpenAI model to use (e.g., gpt-4-turbo or gpt-3.5-turbo).', 'ai-chatbot-for-support-ecommerce' ); ?></p>
+                <p class="description"><?php esc_html_e( 'Specify the OpenAI model to use (e.g., gpt-5-nano or gpt-5-mini).', 'ai-chatbot-for-support-ecommerce' ); ?></p>
             </td>
         </tr>
 
@@ -117,8 +117,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
             <th scope="row"><label for="gemini_model">Gemini Model</label></th>
             <td>
                 <?php $gemini_model = get_option( 'wp_rag_ai_chatbot_gemini_model', 'gemini-2.5-flash-preview-09-2025' ); ?>
-                <input type="text" id="gemini_model" value="<?php echo esc_attr( $gemini_model ); ?>" class="regular-text" placeholder="gemini-2.5-flash-preview-09-2025" />
-                <p class="description"><?php esc_html_e( 'Specify the Gemini model to use (e.g., gemini-2.5-flash-preview-09-2025).', 'ai-chatbot-for-support-ecommerce' ); ?></p>
+                <input type="text" id="gemini_model" value="<?php echo esc_attr( $gemini_model ); ?>" class="regular-text" placeholder="gemini-2.5-flash-lite" />
+                <p class="description"><?php esc_html_e( 'Specify the Gemini model to use (e.g., gemini-2.5-flash-lite).', 'ai-chatbot-for-support-ecommerce' ); ?></p>
             </td>
         </tr>
         

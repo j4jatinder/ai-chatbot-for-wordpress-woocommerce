@@ -1,4 +1,6 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 class WP_RAG_AI_Chatbot_Frontend {
     // ... (Singleton pattern here) ...
     /**

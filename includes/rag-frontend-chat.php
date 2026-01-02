@@ -30,7 +30,7 @@ function rag_ai_chatbot_shortcode() {
     <div id="rag-chatbot-wrapper" class="rag-chatbot-<?php echo esc_attr($chat_position); ?>">
         <!-- Floating Button -->
         <button id="rag-chatbot-button" class="rag-chatbot-button">
-            💬 <?= $chatbot_title;?>
+            💬 <?php echo esc_html( $chatbot_title ); ?>
         </button>
 
         <!-- Modal -->
@@ -187,15 +187,15 @@ function set_aichat_session_cookie() {
 
         setcookie($cookie_name, $full_id, $expire, COOKIEPATH, COOKIE_DOMAIN);
         $_COOKIE[$cookie_name] = $full_id; // Set for immediate use
-        return sanitize_text_field($_COOKIE[$cookie_name]);
+        return sanitize_text_field(  wp_unslash( $_COOKIE[ $cookie_name ])  );
     }
-    return sanitize_text_field($_COOKIE[$cookie_name]);
+    return sanitize_text_field( wp_unslash($_COOKIE[$cookie_name]) );
 
 }
 function get_aichat_session_id() {
     if (isset($_COOKIE['aichat_session_id'])) {
         // Sanitize the cookie value before using it
-        return sanitize_text_field($_COOKIE['aichat_session_id']);
+        return sanitize_text_field(wp_unslash($_COOKIE['aichat_session_id']) );
     }
 
     return set_aichat_session_cookie();

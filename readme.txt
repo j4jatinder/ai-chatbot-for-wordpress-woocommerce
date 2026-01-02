@@ -1,12 +1,15 @@
-=== AI Chatbot for WordPress & WooCommerce ===
+=== AI Chatbot for Support & E-Commerce ===
 Contributors: phpsoftsol
-Tags: ai chatbot, wordpress chatbot, woocommerce chatbot, ai assistant, live chat, chat widget, faq chatbot, product chatbot, gemini ai, openai, customer support, ai support
+Tags: ai chatbot, customer support, ai assistant, gemini ai, openai
 Requires at least: 6.0
-Tested up to: 6.5
+Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.0.6
+Stable tag: 1.0.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+
+AI-powered chatbot for WordPress and WooCommerce using OpenAI or Gemini, trained on your site content.
 
 == Description ==
 

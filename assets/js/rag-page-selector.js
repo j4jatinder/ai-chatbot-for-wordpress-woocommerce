@@ -30,7 +30,7 @@ jQuery(document).ready(function($) {
                 action: 'rag_search_pages',
                 s: searchTerm,
                 // Nonce protection for security is highly recommended
-                // '_wpnonce': ragAdmin.nonce 
+                '_wpnonce': ragAdmin.nonce 
             },
             success: function(response) {
                 $searchResults.empty();

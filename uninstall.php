@@ -34,12 +34,12 @@ foreach ( $plugin_options as $option ) {
 // 2. Delete user meta (notices, temporary data)
 // ----------------------------
 global $wpdb;
-$wpdb->query(
-    $wpdb->prepare(
-        "DELETE FROM {$wpdb->usermeta} WHERE meta_key = %s",
-        'wp_rag_ai_chatbot_domain_notice_dismissed'
-    )
-);
+if ( current_user_can( 'manage_options' ) ) {
+    // Setting $user_id to 0 and $delete_all to true removes the key for ALL users
+    delete_metadata( 'user', 0, 'wp_rag_ai_chatbot_domain_notice_dismissed', '', true );
+}
+
+
 
 // ----------------------------
 // 3. Delete CPT content (Optional: skip if testing)

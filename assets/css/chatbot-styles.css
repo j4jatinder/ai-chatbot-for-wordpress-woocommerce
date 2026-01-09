@@ -1,0 +1,92 @@
+/* Floating Chat Button */
+.acsec-chatbot-button {
+    position: fixed;
+    bottom: 20px;
+    right: 25px;
+    background-color: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 9999;
+    transition: all 0.3s ease;
+}
+.acsec-chatbot-button:hover {
+    background-color: #4338ca;
+}
+
+/* Modal background */
+.acsec-chatbot-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+}
+/* Right Position */
+.acsec-chatbot-bottom-right .acsec-chatbot-button {
+    right: 25px; /* Aligns to the right */
+    left: auto;
+}
+
+/* Left Position */
+.acsec-chatbot-bottom-left .acsec-chatbot-button {
+    left: 25px; /* Aligns to the left */
+    right: auto;
+}
+
+/* Right Position Modal */
+.acsec-chatbot-bottom-right .acsec-chatbot-content {
+    right: 25px; /* Aligns the modal to the right side of the screen */
+    left: auto;
+}
+
+/* Left Position Modal */
+.acsec-chatbot-bottom-left .acsec-chatbot-content {
+    left: 25px; /* Aligns the modal to the left side of the screen */
+    right: auto;
+}
+
+/* Modal content */
+.acsec-chatbot-content {
+    position: fixed;
+    margin: 50px auto;
+    padding: 0;
+    background: #fff;
+    width: 90%;
+    max-width: 420px;
+    height: 80%;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    /* Add transition for smooth opening */
+    transition: all 0.3s ease-in-out;
+}
+
+/* Close button */
+.acsec-chatbot-close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background: transparent;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #333;
+    z-index: 10;
+}
+
+/* Chat area */
+#acsec-chatbot-app {
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+}

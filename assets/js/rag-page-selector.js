@@ -1,8 +1,8 @@
 jQuery(document).ready(function($) {
-    const $searchField = $('#rag-page-search');
-    const $searchResults = $('#rag-page-search-results');
-    const $selectedList = $('#rag-selected-pages-list');
-    const $noPagesSelected = $('#rag-no-pages-selected');
+    const $searchField = $('#acsec-rag-page-search');
+    const $searchResults = $('#acsec-rag-page-search-results');
+    const $selectedList = $('#acsec-rag-selected-pages-list');
+    const $noPagesSelected = $('#acsec-rag-no-pages-selected');
     let searchTimeout = null;
 
     // --- Search Logic (Debounced Input) ---
@@ -21,16 +21,16 @@ jQuery(document).ready(function($) {
     });
 
     function performPageSearch(searchTerm) {
-        $searchResults.empty().slideDown(100).append('<li class="loading">' + ragAdmin.i18n.searching + '</li>');
+        $searchResults.empty().slideDown(100).append('<li class="loading">Searching...</li>');
 
         $.ajax({
-            url: ragAdmin.ajax_url,
+            url: acsecRagAdmin.ajax_url,
             type: 'POST',
             data: {
-                action: 'rag_search_pages',
+                action: 'acsec_rag_search_pages',
                 s: searchTerm,
                 // Nonce protection for security is highly recommended
-                '_wpnonce': ragAdmin.nonce 
+                '_wpnonce': acsecRagAdmin.nonce 
             },
             success: function(response) {
                 $searchResults.empty();
@@ -48,14 +48,14 @@ jQuery(document).ready(function($) {
                         }
                     });
                     if ($searchResults.is(':empty')) {
-                         $searchResults.append('<li>' + ragAdmin.i18n.no_results + '</li>');
+                         $searchResults.append('<li>' + acsecRagAdmin.i18n.no_results + '</li>');
                     }
                 } else {
-                    $searchResults.append('<li>' + ragAdmin.i18n.no_results + '</li>');
+                    $searchResults.append('<li>' + acsecRagAdmin.i18n.no_results + '</li>');
                 }
             },
             error: function() {
-                $searchResults.empty().append('<li>' + ragAdmin.i18n.error + '</li>');
+                $searchResults.empty().append('<li>' + acsecRagAdmin.i18n.error + '</li>');
             }
         });
     }
@@ -70,7 +70,7 @@ jQuery(document).ready(function($) {
         const selectedHtml = 
             '<li data-page-id="' + pageId + '">' +
                 pageTitle + 
-                ' <input type="hidden" name="wp_rag_ai_chatbot_policy_pages[]" value="' + pageId + '" />' +
+                ' <input type="hidden" name="acsec_chatbot_policy_pages[]" value="' + pageId + '" />' +
                 ' <button type="button" class="rag-remove-page button button-small" data-page-id="' + pageId + '">Remove</button>' +
             '</li>';
         
@@ -95,7 +95,7 @@ jQuery(document).ready(function($) {
 
         // If the list is now empty, show the placeholder
         if ($selectedList.is(':empty')) {
-            $selectedList.append('<li id="rag-no-pages-selected">' + ragAdmin.i18n.no_pages_selected + '</li>');
+            $selectedList.append('<li id="acsec-rag-no-pages-selected">' + acsecRagAdmin.i18n.no_pages_selected + '</li>');
         }
 
         // Re-run search if the search box has text (optional, but helpful)
@@ -106,7 +106,7 @@ jQuery(document).ready(function($) {
     
     // Hide results when clicking outside
     $(document).on('click', function(e) {
-        if (!$(e.target).closest('#rag-policy-pages-selector').length) {
+        if (!$(e.target).closest('#acsec-rag-policy-pages-selector').length) {
             $searchResults.slideUp(100);
         }
     });

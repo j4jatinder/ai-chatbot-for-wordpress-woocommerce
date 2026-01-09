@@ -1,35 +1,35 @@
 <?php
 /**
- * WP RAG AI Chatbot Admin Class
+ * ACSEC Chatbot Admin Class
  *
  * Handles all admin-side functionality, including settings, AJAX handlers,
  * and content fetching for the RAG Node API.
  *
- * NOTE: This file assumes WP_RAG_AI_CHATBOT_PLUGIN_DIR is defined in the main plugin file.
+ * NOTE: This file assumes ACSEC_PLUGIN_DIR is defined in the main plugin file.
  */
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 // Define a constant path for demonstration if it's not defined elsewhere
-if ( ! defined( 'WP_RAG_AI_CHATBOT_PLUGIN_DIR' ) ) {
-    define( 'WP_RAG_AI_CHATBOT_PLUGIN_DIR', dirname( __FILE__ ) . '/' );
+if ( ! defined( 'ACSEC_PLUGIN_DIR' ) ) {
+    define( 'ACSEC_PLUGIN_DIR', dirname( __FILE__ ) . '/' );
 }
 
-class WP_RAG_AI_Chatbot_Admin {
+class ACSEC_Chatbot_Admin {
     /**
      * The single instance of the class.
      *
-     * @var WP_RAG_AI_Chatbot_Admin
+     * @var ACSEC_Chatbot_Admin
      */
     protected static $instance = null;
 
     /**
-     * Main WP_RAG_AI_Chatbot_Admin Instance.
+     * Main ACSEC_Chatbot_Admin Instance.
      *
      * Ensures only one instance of the admin class is loaded or can be loaded.
      *
      * @since 1.0.0
      * @static
-     * @return WP_RAG_AI_Chatbot_Admin - Main instance.
+     * @return ACSEC_Chatbot_Admin - Main instance.
      */
     public static function instance() {
         if ( is_null( self::$instance ) ) {
@@ -39,9 +39,9 @@ class WP_RAG_AI_Chatbot_Admin {
     }
 
     public function __construct() {
-       add_action( 'admin_notices', array($this, 'wp_rag_ai_chatbot_show_domain_notice') );
+       add_action( 'admin_notices', array($this, 'acsec_chatbot_show_domain_notice') );
        add_action(
-    'wp_ajax_wp_rag_ai_chatbot_dismiss_domain_notice',
+    'wp_ajax_acsec_chatbot_dismiss_domain_notice',
     array( $this, 'dismiss_domain_notice' )
 );
 
@@ -53,12 +53,12 @@ class WP_RAG_AI_Chatbot_Admin {
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) ); // Hooked here
 
         // AJAX Handlers
-        add_action( 'wp_ajax_wp_rag_ai_chatbot_register', array( $this, 'handle_site_register_ajax' ) );
-        add_action( 'wp_ajax_wp_rag_ai_chatbot_push_data', array( $this, 'handle_data_push_ajax' ) );
-        add_action( 'wp_ajax_wp_rag_ai_chatbot_send_api_keys', array( $this, 'handle_api_keys_ajax' ) );
+        add_action( 'wp_ajax_acsec_chatbot_register', array( $this, 'handle_site_register_ajax' ) );
+        add_action( 'wp_ajax_acsec_chatbot_push_data', array( $this, 'handle_data_push_ajax' ) );
+        add_action( 'wp_ajax_acsec_chatbot_send_api_keys', array( $this, 'handle_api_keys_ajax' ) );
         // --- NEW HANDLER for saving configuration locally ---
-        add_action( 'wp_ajax_wp_rag_ai_chatbot_save_config', array( $this, 'handle_ai_config_save' ) );
-        add_action( 'wp_ajax_rag_search_pages', array( $this, 'rag_search_pages_ajax' ) );
+        add_action( 'wp_ajax_acsec_chatbot_save_config', array( $this, 'handle_ai_config_save' ) );
+        add_action( 'wp_ajax_acsec_rag_search_pages', array( $this, 'rag_search_pages_ajax' ) );
     }
 
     /**
@@ -68,35 +68,39 @@ class WP_RAG_AI_Chatbot_Admin {
     public function enqueue_admin_scripts( $hook ) {
       
         $screen = get_current_screen();
-        if ( empty( $screen ) || $screen->id !== 'toplevel_page_wp-rag-ai-chatbot-settings' ) {
+        if ( empty( $screen ) || $screen->id !== 'toplevel_page_acsec-chatbot-settings' ) {
             return;
         }
 
 
         wp_enqueue_script('jquery');
         
-        // Localize data: This step DEFINES the global JavaScript object 'wpRagChatbotAdmin'
-        wp_localize_script( 'jquery', 'wpRagChatbotAdmin', array(
+        // Localize data: This step DEFINES the global JavaScript object 'acsecWpRagChatbotAdmin'
+        wp_localize_script( 'jquery', 'acsecWpRagChatbotAdmin', array(
             'ajaxurl'            => admin_url( 'admin-ajax.php' ),
-            'dataPushNonce'      => wp_create_nonce( 'wp-rag-ai-chatbot-data-push' ),
-            'siteRegisterNonce'  => wp_create_nonce( 'wp-rag-ai-chatbot-site-register' ),
-            'sendKeysNonce'      => wp_create_nonce( 'wp-rag-ai-chatbot-send-keys' ),
-            'saveConfigNonce'    => wp_create_nonce( 'wp-rag-ai-chatbot-save-config' ), // New nonce
-            'noticeNonce'    => wp_create_nonce( 'wp_rag_ai_chatbot_notice_nonce' ),
+            'dataPushNonce'      => wp_create_nonce( 'acsec-chatbot-data-push' ),
+            'siteRegisterNonce'  => wp_create_nonce( 'acsec-chatbot-site-register' ),
+            'sendKeysNonce'      => wp_create_nonce( 'acsec-chatbot-send-keys' ),
+            'saveConfigNonce'    => wp_create_nonce( 'acsec-chatbot-save-config' ), // New nonce
+            'noticeNonce'    => wp_create_nonce( 'acsec_chatbot_notice_nonce' ),
         ) );
 
         // Check if we are on the correct settings page before enque
-        wp_enqueue_script( 'rag-page-selector', plugin_dir_url( __FILE__ ) . '../assets/js/rag-page-selector.js', array( 'jquery' ), '1.0', true );
+        wp_enqueue_script( 'acsec-rag-page-selector', plugin_dir_url( __FILE__ ) . '../assets/js/rag-page-selector.js', array( 'jquery' ), '1.1', true );
 
         // Pass data to the JavaScript file
-        wp_localize_script( 'rag-page-selector', 'ragAdmin', array(
+        wp_localize_script( 'acsec-rag-page-selector', 'acsecRagAdmin', array(
             'ajax_url' => admin_url( 'admin-ajax.php' ),
-            'nonce'    => wp_create_nonce( 'rag-page-search-nonce' ),
+            'nonce'    => wp_create_nonce( 'acsec-rag-page-search-nonce' ),
             'i18n'     => array(
-                'no_pages_selected' => __( 'No pages selected yet.', 'ai-chatbot-for-support-ecommerce' ),
-                'no_results'        => __( 'No results found.', 'ai-chatbot-for-support-ecommerce' ),
+                'no_pages_selected' => __( 'No pages selected yet.', 'ai-chatbot-for-support-e-commerce' ),
+                'no_results'        => __( 'No results found.', 'ai-chatbot-for-support-e-commerce' ),
+                'error'             => __( 'Error occurred.', 'ai-chatbot-for-support-e-commerce' ),
             ),
         ) );
+
+        // Enqueue admin settings script
+        wp_enqueue_script( 'acsec-admin-settings', plugin_dir_url( __FILE__ ) . '../assets/js/admin-settings.js', array( 'jquery' ), ACSEC_VERSION, true );
     // Now, call your CSS function, which should be renamed/refactored
     $this->enqueue_page_selector_styles();
 
@@ -106,10 +110,10 @@ class WP_RAG_AI_Chatbot_Admin {
 public function add_admin_menu() {
     // Add top-level menu item (Settings Page)
     add_menu_page(
-        __( 'AI Chatbot Settings', 'ai-chatbot-for-support-ecommerce' ),
-        __( 'AI Chatbot', 'ai-chatbot-for-support-ecommerce' ),
+        __( 'AI Chatbot Settings', 'ai-chatbot-for-support-e-commerce' ),
+        __( 'AI Chatbot', 'ai-chatbot-for-support-e-commerce' ),
         'manage_options',
-        'wp-rag-ai-chatbot-settings', // The parent slug
+        'acsec-chatbot-settings', // The parent slug
         array( $this, 'settings_page_html' ),
         'dashicons-format-chat',
         6
@@ -118,61 +122,61 @@ public function add_admin_menu() {
     // Add the Custom Post Type (FAQ) management link as a submenu
     // We use edit.php?post_type=YOUR_SLUG as the menu slug.
     add_submenu_page(
-        'wp-rag-ai-chatbot-settings', // Parent slug: MUST match the slug of add_menu_page above
-        __( 'AI Chatbot FAQs (RAG)', 'ai-chatbot-for-support-ecommerce' ), // Page title
-        __( 'AI Chatbot FAQs (RAG)', 'ai-chatbot-for-support-ecommerce' ), // Menu title
+        'acsec-chatbot-settings', // Parent slug: MUST match the slug of add_menu_page above
+        __( 'AI Chatbot FAQs (RAG)', 'ai-chatbot-for-support-e-commerce' ), // Page title
+        __( 'AI Chatbot FAQs (RAG)', 'ai-chatbot-for-support-e-commerce' ), // Menu title
         'manage_options',
-        'edit.php?post_type=rag_ai_chatbot_faq' // Target link for the CPT list screen
+        'edit.php?post_type=acsec_chatbot_faq' // Target link for the CPT list screen
     );
     
     // Optional: Add a "Add New FAQ" link directly under the menu as well
     add_submenu_page(
-        'wp-rag-ai-chatbot-settings',
-        __( 'Add New AI Chatbot FAQ', 'ai-chatbot-for-support-ecommerce' ),
-        __( 'Add New AI Chatbot FAQ', 'ai-chatbot-for-support-ecommerce' ),
+        'acsec-chatbot-settings',
+        __( 'Add New AI Chatbot FAQ', 'ai-chatbot-for-support-e-commerce' ),
+        __( 'Add New AI Chatbot FAQ', 'ai-chatbot-for-support-e-commerce' ),
         'manage_options',
-        'post-new.php?post_type=rag_ai_chatbot_faq'
+        'post-new.php?post_type=acsec_chatbot_faq'
     );
 }
     // Inside your main plugin class
 
 /**
- * Register the 'rag_ai_chatbot_faq' Custom Post Type.
+ * Register the 'acsec_chatbot_faq' Custom Post Type.
  * This CPT is used to feed question/answer pairs to the RAG model.
  */
 public function register_faq_cpt() {
     $labels = array(
-        'name'                  => _x( 'AI Chatbot FAQs (RAG)', 'Post Type General Name', 'ai-chatbot-for-support-ecommerce' ),
-        'singular_name'         => _x( 'AI Chatbot FAQs (RAG)', 'Post Type Singular Name', 'ai-chatbot-for-support-ecommerce' ),
-        'menu_name'             => __( 'AI Chatbot FAQs (RAG)', 'ai-chatbot-for-support-ecommerce' ),
-        'name_admin_bar'        => __( 'RAG FAQ', 'ai-chatbot-for-support-ecommerce' ),
-        'archives'              => __( 'FAQ Archives', 'ai-chatbot-for-support-ecommerce' ),
-        'attributes'            => __( 'FAQ Attributes', 'ai-chatbot-for-support-ecommerce' ),
-        'parent_item_colon'     => __( 'Parent FAQ:', 'ai-chatbot-for-support-ecommerce' ),
-        'all_items'             => __( 'All AI Chatbot FAQs (RAG)', 'ai-chatbot-for-support-ecommerce' ),
-        'add_new_item'          => __( 'Add New RAG AI FAQ', 'ai-chatbot-for-support-ecommerce' ),
-        'add_new'               => __( 'Add New', 'ai-chatbot-for-support-ecommerce' ),
-        'new_item'              => __( 'New AI Chatbot FAQ', 'ai-chatbot-for-support-ecommerce' ),
-        'edit_item'             => __( 'Edit AI Chatbot FAQ', 'ai-chatbot-for-support-ecommerce' ),
-        'update_item'           => __( 'Update AI Chatbot FAQ', 'ai-chatbot-for-support-ecommerce' ),
-        'view_item'             => __( 'View AI FAQ', 'ai-chatbot-for-support-ecommerce' ),
-        'view_items'            => __( 'View AI FAQs', 'ai-chatbot-for-support-ecommerce' ),
-        'search_items'          => __( 'Search AI FAQs', 'ai-chatbot-for-support-ecommerce' ),
-        'not_found'             => __( 'Not found', 'ai-chatbot-for-support-ecommerce' ),
-        'not_found_in_trash'    => __( 'Not found in Trash', 'ai-chatbot-for-support-ecommerce' ),
-        'featured_image'        => __( 'Featured Image', 'ai-chatbot-for-support-ecommerce' ),
-        'set_featured_image'    => __( 'Set featured image', 'ai-chatbot-for-support-ecommerce' ),
-        'remove_featured_image' => __( 'Remove featured image', 'ai-chatbot-for-support-ecommerce' ),
-        'use_featured_image'    => __( 'Use as featured image', 'ai-chatbot-for-support-ecommerce' ),
-        'insert_into_item'      => __( 'Insert into FAQ', 'ai-chatbot-for-support-ecommerce' ),
-        'uploaded_to_this_item' => __( 'Uploaded to this FAQ', 'ai-chatbot-for-support-ecommerce' ),
-        'items_list'            => __( 'FAQs list', 'ai-chatbot-for-support-ecommerce' ),
-        'items_list_navigation' => __( 'FAQs list navigation', 'ai-chatbot-for-support-ecommerce' ),
-        'filter_items_list'     => __( 'Filter FAQs list', 'ai-chatbot-for-support-ecommerce' ),
+        'name'                  => _x( 'AI Chatbot FAQs (RAG)', 'Post Type General Name', 'ai-chatbot-for-support-e-commerce' ),
+        'singular_name'         => _x( 'AI Chatbot FAQs (RAG)', 'Post Type Singular Name', 'ai-chatbot-for-support-e-commerce' ),
+        'menu_name'             => __( 'AI Chatbot FAQs (RAG)', 'ai-chatbot-for-support-e-commerce' ),
+        'name_admin_bar'        => __( 'RAG FAQ', 'ai-chatbot-for-support-e-commerce' ),
+        'archives'              => __( 'FAQ Archives', 'ai-chatbot-for-support-e-commerce' ),
+        'attributes'            => __( 'FAQ Attributes', 'ai-chatbot-for-support-e-commerce' ),
+        'parent_item_colon'     => __( 'Parent FAQ:', 'ai-chatbot-for-support-e-commerce' ),
+        'all_items'             => __( 'All AI Chatbot FAQs (RAG)', 'ai-chatbot-for-support-e-commerce' ),
+        'add_new_item'          => __( 'Add New AI Chatbot FAQ', 'ai-chatbot-for-support-e-commerce' ),
+        'add_new'               => __( 'Add New', 'ai-chatbot-for-support-e-commerce' ),
+        'new_item'              => __( 'New AI Chatbot FAQ', 'ai-chatbot-for-support-e-commerce' ),
+        'edit_item'             => __( 'Edit AI Chatbot FAQ', 'ai-chatbot-for-support-e-commerce' ),
+        'update_item'           => __( 'Update AI Chatbot FAQ', 'ai-chatbot-for-support-e-commerce' ),
+        'view_item'             => __( 'View AI FAQ', 'ai-chatbot-for-support-e-commerce' ),
+        'view_items'            => __( 'View AI FAQs', 'ai-chatbot-for-support-e-commerce' ),
+        'search_items'          => __( 'Search AI FAQs', 'ai-chatbot-for-support-e-commerce' ),
+        'not_found'             => __( 'Not found', 'ai-chatbot-for-support-e-commerce' ),
+        'not_found_in_trash'    => __( 'Not found in Trash', 'ai-chatbot-for-support-e-commerce' ),
+        'featured_image'        => __( 'Featured Image', 'ai-chatbot-for-support-e-commerce' ),
+        'set_featured_image'    => __( 'Set featured image', 'ai-chatbot-for-support-e-commerce' ),
+        'remove_featured_image' => __( 'Remove featured image', 'ai-chatbot-for-support-e-commerce' ),
+        'use_featured_image'    => __( 'Use as featured image', 'ai-chatbot-for-support-e-commerce' ),
+        'insert_into_item'      => __( 'Insert into FAQ', 'ai-chatbot-for-support-e-commerce' ),
+        'uploaded_to_this_item' => __( 'Uploaded to this FAQ', 'ai-chatbot-for-support-e-commerce' ),
+        'items_list'            => __( 'FAQs list', 'ai-chatbot-for-support-e-commerce' ),
+        'items_list_navigation' => __( 'FAQs list navigation', 'ai-chatbot-for-support-e-commerce' ),
+        'filter_items_list'     => __( 'Filter FAQs list', 'ai-chatbot-for-support-e-commerce' ),
     );
     $args = array(
-        'label'                 => __( 'RAG AI FAQ', 'ai-chatbot-for-support-ecommerce' ),
-        'description'           => __( 'Questions and answers to feed to the RAG AI model.', 'ai-chatbot-for-support-ecommerce' ),
+        'label'                 => __( 'AI Chatbot FAQ', 'ai-chatbot-for-support-e-commerce' ),
+        'description'           => __( 'Questions and answers to feed to the AI Chatbot model.', 'ai-chatbot-for-support-e-commerce' ),
         'labels'                => $labels,
         'supports'              => array( 'title', 'editor' ), // Title is 'question', Editor is 'answer'
         'hierarchical'          => false,
@@ -190,7 +194,7 @@ public function register_faq_cpt() {
         'rewrite'               => false, //array( 'slug' => 'rag-ai-chatbot-faq' ), // Friendly URL slug
         'show_in_rest'          => true, // Enable for Gutenberg/REST API
     );
-    register_post_type( 'rag_ai_chatbot_faq', $args );
+    register_post_type( 'acsec_chatbot_faq', $args );
 }
 
 // Ensure you hook this up in your class constructor or initialization:
@@ -201,68 +205,60 @@ public function register_faq_cpt() {
 
         // Define a settings section
         add_settings_section(
-            'wp_rag_ai_chatbot_main_section',
-            __( 'AI Chatbot Display & Behavior', 'ai-chatbot-for-support-ecommerce' ),
+            'acsec_chatbot_main_section',
+            __( 'AI Chatbot Display & Behavior', 'ai-chatbot-for-support-e-commerce' ),
             array( $this, 'main_settings_section_callback' ),
-            'wp-rag-ai-chatbot-settings'
+            'acsec-chatbot-settings'
         );
 
-        // register_setting( 'wp-rag-ai-chatbot-group', 'wp_rag_ai_chatbot_node_url' );
-        register_setting( 'wp-rag-ai-chatbot-group', 'wp_rag_ai_chatbot_site_id', array( 'sanitize_callback' => 'sanitize_text_field' ) );
-        register_setting( 'wp-rag-ai-chatbot-group', 'wp_rag_ai_chatbot_api_key', array( 'sanitize_callback' => 'sanitize_text_field' ) );
-        register_setting( 'wp-rag-ai-chatbot-group', 'wp_rag_ai_chatbot_keys_sent' , array(
+        // register_setting( 'acsec-chatbot-group', 'acsec_chatbot_node_url' );
+        register_setting( 'acsec-chatbot-group', 'acsec_chatbot_site_id', array( 'sanitize_callback' => 'sanitize_text_field' ) );
+        register_setting( 'acsec-chatbot-group', 'acsec_chatbot_api_key', array( 'sanitize_callback' => 'sanitize_text_field' ) );
+        register_setting( 'acsec-chatbot-group', 'acsec_chatbot_keys_sent' , array(
         'sanitize_callback' => 'absint',
     )); // Timestamp of last key send
-        register_setting( 'wp-rag-ai-chatbot-group', 'wp_rag_ai_chatbot_data_push_types',    array(
+        register_setting( 'acsec-chatbot-group', 'acsec_chatbot_data_push_types',    array(
         'sanitize_callback' => array( $this, 'sanitize_data_push_types' ),
     ) ); // Timestamp of last key send
 
         // Register general settings
         
-        register_setting( 'wp-rag-ai-chatbot-group_static', 'wp_rag_ai_chatbot_chat_position',  array(
+        register_setting( 'acsec-chatbot-group_static', 'acsec_chatbot_chat_position',  array(
         'sanitize_callback' => array( $this, 'sanitize_chat_position' ),
+        'default' => 'bottom-right',
     ) );
 
-        register_setting( 'wp-rag-ai-chatbot-group_static', 'wp_rag_ai_chatbot_chatbot_title',  array(
+        register_setting( 'acsec-chatbot-group_static', 'acsec_chatbot_chatbot_title',  array(
         'sanitize_callback' => 'sanitize_text_field',
     ) );
         // 1. Register the new policy pages setting
         register_setting(
-        'wp-rag-ai-chatbot-group_static', // Option group
-        'wp_rag_ai_chatbot_policy_pages', // Option name
+        'acsec-chatbot-group_static', // Option group
+        'acsec_chatbot_policy_pages', // Option name
         array( // <-- Correct top-level array for the schema
             'type'              => 'array',
-            'description'       => 'List of IDs for pages the RAG AI should use as policy sources.',
-           'sanitize_callback' => array( $this, 'wp_rag_ai_chatbot_sanitize_page_ids' ), // Correct callback syntax for class method
+            'description'       => 'List of IDs for pages the AI Chatbot should use as policy sources.',
+           'sanitize_callback' => array( $this, 'acsec_chatbot_sanitize_page_ids' ), // Correct callback syntax for class method
             'default'           => array(),
             'show_in_rest'      => false,
         )
     );
-    register_setting(
-        'wp-rag-ai-chatbot-group_static', // Option group
-        'wp_rag_ai_chatbot_current_status', // Option name
-         array(
-        'sanitize_callback' => 'rest_sanitize_boolean',
-        'default'           => false,
-         ),
-        array( // <-- Correct top-level array for the schema
-            'type'              => 'boolean',
-            'description'       => 'Enable/Disable on frontend?',
-           // 'sanitize_callback' => array( $this, 'wp_rag_ai_chatbot_sanitize_page_ids' ), // Correct callback syntax for class method
-            'default'           => 0,
-            'show_in_rest'      => false,
-        )
-    );
-
-
+        register_setting(
+            'acsec-chatbot-group_static', // Option group
+            'acsec_chatbot_current_status', // Option name
+            array(
+                'sanitize_callback' => array( $this, 'sanitize_current_status' ),
+                'default' => '0',
+            )
+        );
         // --- Register AI Configuration Settings (No longer added via form, but still need to be registered) ---
-        register_setting( 'wp-rag-ai-chatbot-group', 'wp_rag_ai_chatbot_active_provider',   array(
+        register_setting( 'acsec-chatbot-group', 'acsec_chatbot_active_provider',   array(
         'sanitize_callback' => array( $this, 'sanitize_active_provider' ),
     ) );
-        register_setting( 'wp-rag-ai-chatbot-group', 'wp_rag_ai_chatbot_openai_model',   array(
+        register_setting( 'acsec-chatbot-group', 'acsec_chatbot_openai_model',   array(
         'sanitize_callback' => 'sanitize_text_field',
     ) );
-        register_setting( 'wp-rag-ai-chatbot-group', 'wp_rag_ai_chatbot_gemini_model',   array(
+        register_setting( 'acsec-chatbot-group', 'acsec_chatbot_gemini_model',   array(
         'sanitize_callback' => 'sanitize_text_field',
     ) );
         
@@ -270,29 +266,29 @@ public function register_faq_cpt() {
       
 
         add_settings_field(
-            'wp_rag_ai_chatbot_current_status_field',
-            __( 'Enable/Disable on Frontend', 'ai-chatbot-for-support-ecommerce' ),
-            array( $this, 'wp_rag_ai_switch_status_callback' ),
-            'wp-rag-ai-chatbot-settings',
-            'wp_rag_ai_chatbot_main_section',
+            'acsec_chatbot_current_status_field',
+            __( 'Enable/Disable on Frontend', 'ai-chatbot-for-support-e-commerce' ),
+            array( $this, 'acsec_switch_status_callback' ),
+            'acsec-chatbot-settings',
+            'acsec_chatbot_main_section',
              array(
-            'label_for' => 'wp_rag_ai_chatbot_current_status_field', // Associates the title label with the input field
+            'label_for' => 'acsec_chatbot_current_status_field', // Associates the title label with the input field
         )
         );
         add_settings_field(
-            'wp_rag_ai_chatbot_policy_pages_field',
-            __( 'Pages for RAG', 'ai-chatbot-for-support-ecommerce' ),
-            array( $this, 'wp_rag_ai_chatbot_policy_pages_callback' ),
-            'wp-rag-ai-chatbot-settings',
-            'wp_rag_ai_chatbot_main_section'
+            'acsec_chatbot_policy_pages_field',
+            __( 'Pages for RAG', 'ai-chatbot-for-support-e-commerce' ),
+            array( $this, 'acsec_chatbot_policy_pages_callback' ),
+            'acsec-chatbot-settings',
+            'acsec_chatbot_main_section'
 
         );
          add_settings_field(
-            'wp_rag_ai_chatbot_chatbot_title_field',
-            __( 'Chatbot Widget Title', 'ai-chatbot-for-support-ecommerce' ),
-            array( $this, 'wp_rag_ai_chatbot_chatbot_title_callback' ),
-            'wp-rag-ai-chatbot-settings',
-            'wp_rag_ai_chatbot_main_section'
+            'acsec_chatbot_chatbot_title_field',
+            __( 'Chatbot Widget Title', 'ai-chatbot-for-support-e-commerce' ),
+            array( $this, 'acsec_chatbot_chatbot_title_callback' ),
+            'acsec-chatbot-settings',
+            'acsec_chatbot_main_section'
 
         );
 
@@ -300,9 +296,13 @@ public function register_faq_cpt() {
     }
 
     public function sanitize_chat_position( $value ) {
-    $allowed = array( 'left', 'right' );
-    return in_array( $value, $allowed, true ) ? $value : 'right';
+    $allowed = array( 'bottom-left', 'bottom-right' );
+    return in_array( $value, $allowed, true ) ? $value : 'bottom-right';
 }
+
+    public function sanitize_current_status( $value ) {
+        return $value ? '1' : '0';
+    }
 
 public function sanitize_active_provider( $value ) {
     $allowed = array( 'gemini', 'openai' );
@@ -319,11 +319,11 @@ public function sanitize_data_push_types( $input ) {
 }
 
 // Field Callback (Outputs the switch/checkbox HTML)
-function wp_rag_ai_switch_status_callback() {
-    $option_value = get_option( 'wp_rag_ai_chatbot_current_status', '0' ); // Get the current value, default to '0' (off)
+function acsec_switch_status_callback() {
+    $option_value = get_option( 'acsec_chatbot_current_status', '0' ); // Get the current value, default to '0' (off)
 // var_dump($option_value);
-    echo '<label for="wp_rag_ai_chatbot_current_status">';
-    echo '<input type="checkbox" id="wp_rag_ai_chatbot_current_status" name="wp_rag_ai_chatbot_current_status" value="1" ' . checked( '1', $option_value, false ) . '/>';
+    echo '<label for="acsec_chatbot_current_status">';
+    echo '<input type="checkbox" id="acsec_chatbot_current_status" name="acsec_chatbot_current_status" value="1" ' . checked( '1', $option_value, false ) . '/>';
     echo ' Check to enable the feature.</label>'; // Add descriptive text next to the checkbox
 }
     // Inside your main plugin class
@@ -341,7 +341,7 @@ public function rag_search_pages_ajax() {
     ! isset( $_POST['_wpnonce'] ) ||
     ! wp_verify_nonce(
         sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ),
-        'rag-page-search-nonce'
+        'acsec-rag-page-search-nonce'
     )
 ) {
     wp_send_json_error( 'Invalid nonce' );
@@ -381,24 +381,24 @@ public function rag_search_pages_ajax() {
  // Inside your main plugin class
 // Inside your main plugin class
 
-public function wp_rag_ai_chatbot_policy_pages_callback() {
+public function acsec_chatbot_policy_pages_callback() {
     // Get the currently saved array of page IDs
-    $selected_page_ids = get_option( 'wp_rag_ai_chatbot_policy_pages', array() );
+    $selected_page_ids = get_option( 'acsec_chatbot_policy_pages', array() );
     ?>
-    <div id="rag-policy-pages-selector">
+    <div id="acsec-rag-policy-pages-selector">
         
-        <input type="text" id="rag-page-search" placeholder="<?php esc_attr_e( 'Type to search for a page...', 'ai-chatbot-for-support-ecommerce' ); ?>" style="width: 100%; max-width: 400px;" />
+        <input type="text" id="acsec-rag-page-search" placeholder="<?php esc_attr_e( 'Type to search for a page...', 'ai-chatbot-for-support-e-commerce' ); ?>" style="width: 100%; max-width: 400px;" />
         
-        <ul id="rag-page-search-results" style="border: 1px solid #ccc; max-height: 150px; overflow-y: auto; list-style: none; padding: 5px; margin-top: 5px; background: #fff; display: none;">
-            <li class="loading" style="display: none; padding: 5px;"><?php esc_html_e( 'Searching...', 'ai-chatbot-for-support-ecommerce' ); ?></li>
+        <ul id="acsec-rag-page-search-results" style="border: 1px solid #ccc; max-height: 150px; overflow-y: auto; list-style: none; padding: 5px; margin-top: 5px; background: #fff; display: none;">
+            <li class="loading" style="display: none; padding: 5px;"><?php esc_html_e( 'Searching...', 'ai-chatbot-for-support-e-commerce' ); ?></li>
         </ul>
 
         <p class="description"><?php esc_html_e( 'Selected pages will be indexed for AI responses.
-Maximum 100 pages. Content is truncated to 1000 words per page.', 'ai-chatbot-for-support-ecommerce' ); ?></p>
+Maximum 100 pages. Content is truncated to 1000 words per page.', 'ai-chatbot-for-support-e-commerce' ); ?></p>
 
-        <div id="rag-selected-policy-pages">
-            <h4><?php esc_html_e( 'Currently Selected Pages:', 'ai-chatbot-for-support-ecommerce' ); ?></h4>
-            <ul id="rag-selected-pages-list" class="rag-token-list" style="list-style: none; padding: 0;">
+        <div id="acsec-rag-selected-policy-pages">
+            <h4><?php esc_html_e( 'Currently Selected Pages:', 'ai-chatbot-for-support-e-commerce' ); ?></h4>
+            <ul id="acsec-rag-selected-pages-list" class="acsec-rag-token-list" style="list-style: none; padding: 0;">
                 <?php
                 if ( ! empty( $selected_page_ids ) ) {
                     foreach ( $selected_page_ids as $page_id ) {
@@ -407,9 +407,9 @@ Maximum 100 pages. Content is truncated to 1000 words per page.', 'ai-chatbot-fo
                             ?>
                             <li data-page-id="<?php echo esc_attr( $page_id ); ?>">
                                 <?php echo esc_html( $page_title ); ?> 
-                                <input type="hidden" name="wp_rag_ai_chatbot_policy_pages[]" value="<?php echo esc_attr( $page_id ); ?>" />
+                                <input type="hidden" name="acsec_chatbot_policy_pages[]" value="<?php echo esc_attr( $page_id ); ?>" />
                                 
-                                <button type="button" class="rag-remove-page rag-icon-remove" data-page-id="<?php echo esc_attr( $page_id ); ?>" title="<?php esc_attr_e( 'Remove Page', 'ai-chatbot-for-support-ecommerce' ); ?>">
+                                <button type="button" class="acsec-rag-remove-page acsec-rag-icon-remove" data-page-id="<?php echo esc_attr( $page_id ); ?>" title="<?php esc_attr_e( 'Remove Page', 'ai-chatbot-for-support-e-commerce' ); ?>">
                                     <span class="dashicons dashicons-no-alt"></span>
                                 </button>
                             </li>
@@ -417,12 +417,13 @@ Maximum 100 pages. Content is truncated to 1000 words per page.', 'ai-chatbot-fo
                         }
                     }
                 } else {
-                    echo '<li id="rag-no-pages-selected" class="no-pages-placeholder">No pages selected yet.</li>';
+                    echo '<li id="acsec-rag-no-pages-selected" class="no-pages-placeholder">No pages selected yet.</li>';
                 }
                 ?>
             </ul>
         </div>
     </div>
+    <input type="hidden" name="acsec_chatbot_policy_pages[]" value="" />
     <?php
     $this->enqueue_page_selector_styles(); // Call the method to inject the styles
 }
@@ -435,7 +436,7 @@ public function enqueue_page_selector_styles() {
     
     $css = '
         /* --- CLUSTER/TOKEN CONTAINER --- */
-        #rag-selected-pages-list.rag-token-list {
+        #acsec-rag-selected-pages-list.acsec-rag-token-list {
             display: flex; /* Key to clustering */
             flex-wrap: wrap; /* Key to wrapping to the next line */
             gap: 8px; /* Spacing between tokens (horizontal and vertical) */
@@ -443,7 +444,7 @@ public function enqueue_page_selector_styles() {
         }
         
         /* --- INDIVIDUAL TOKEN STYLING --- */
-        #rag-selected-pages-list.rag-token-list > li {
+        #acsec-rag-selected-pages-list.acsec-rag-token-list > li {
             background: #e3e3e3;
             border: 1px solid #ccc;
             border-radius: 4px;
@@ -458,7 +459,7 @@ public function enqueue_page_selector_styles() {
         }
         
         /* --- REMOVE ICON STYLING (Kept for completeness) --- */
-        .rag-icon-remove {
+        .acsec-rag-icon-remove {
             background: none;
             border: none;
             padding: 0 0 0 5px;
@@ -472,16 +473,16 @@ public function enqueue_page_selector_styles() {
             justify-content: center;
             transition: color 0.1s ease;
         }
-        .rag-icon-remove:hover {
+        .acsec-rag-icon-remove:hover {
             color: #d00;
         }
-        .rag-icon-remove .dashicons {
+        .acsec-rag-icon-remove .dashicons {
             font-size: 14px;
             width: 14px;
             height: 14px;
             line-height: 1;
         }
-        .rag-token-list .no-pages-placeholder {
+        .acsec-rag-token-list .no-pages-placeholder {
             padding: 4px 0;
             background: none;
             border: none;
@@ -492,7 +493,7 @@ public function enqueue_page_selector_styles() {
 }
 
 // 3. Sanitization Method
-public function wp_rag_ai_chatbot_sanitize_page_ids( $input ) {
+public function acsec_chatbot_sanitize_page_ids( $input ) {
     if ( is_array( $input ) ) {
         $sanitized_ids = array_map( 'intval', $input );
         // Filter out any zero/invalid values
@@ -500,14 +501,14 @@ public function wp_rag_ai_chatbot_sanitize_page_ids( $input ) {
     }
     return array();
 }
-public function wp_rag_ai_chatbot_show_domain_notice() {
+public function acsec_chatbot_show_domain_notice() {
 
     if ( ! current_user_can( 'manage_options' ) ) {
         return;
     }
 
     $screen = get_current_screen();
-    if ( empty( $screen ) || $screen->id !== 'toplevel_page_wp-rag-ai-chatbot-settings' ) {
+    if ( empty( $screen ) || $screen->id !== 'toplevel_page_acsec-chatbot-settings' ) {
         return;
     }
 
@@ -518,21 +519,21 @@ public function wp_rag_ai_chatbot_show_domain_notice() {
     }
 
     // Check dismissal
-    if ( get_user_meta( get_current_user_id(), 'wp_rag_ai_chatbot_domain_notice_dismissed', true ) ) {
+    if ( get_user_meta( get_current_user_id(), 'acsec_chatbot_domain_notice_dismissed', true ) ) {
         return;
     }
 
-    echo '<div class="notice notice-info is-dismissible wp-rag-ai-chatbot-domain-notice">';
-    echo '<p><strong>' . esc_html__( 'AI Chatbot', 'ai-chatbot-for-support-ecommerce' ) . '</strong></p>';
+    echo '<div class="notice notice-info is-dismissible acsec-chatbot-domain-notice">';
+    echo '<p><strong>' . esc_html__( 'AI Chatbot', 'ai-chatbot-for-support-e-commerce' ) . '</strong></p>';
     echo '<p>' . esc_html__(
         'This plugin requires a publicly accessible HTTPS domain. Localhost and local development environments are not supported.',
-        'ai-chatbot-for-support-ecommerce'
+        'ai-chatbot-for-support-e-commerce'
     ) . '</p>';
     echo '</div>';
 }
 public function dismiss_domain_notice() {
 
-    check_ajax_referer( 'wp_rag_ai_chatbot_notice_nonce', 'nonce' );
+    check_ajax_referer( 'acsec_chatbot_notice_nonce', 'nonce' );
 
     if ( ! current_user_can( 'manage_options' ) ) {
         wp_send_json_error();
@@ -540,7 +541,7 @@ public function dismiss_domain_notice() {
 
     update_user_meta(
         get_current_user_id(),
-        'wp_rag_ai_chatbot_domain_notice_dismissed',
+        'acsec_chatbot_domain_notice_dismissed',
         1
     );
 
@@ -550,7 +551,7 @@ public function dismiss_domain_notice() {
 /**
  * Creates the "AI Chatbot Content" tag if it does not already exist.
  */
-public function wp_rag_ai_create_chatbot_tag() {
+public function acsec_create_chatbot_tag() {
     $tag_name = 'AI Chatbot Content';
     $taxonomy = 'post_tag';
 
@@ -575,20 +576,20 @@ public function wp_rag_ai_create_chatbot_tag() {
       //  echo '<p class="notice notice-info">' . esc_html__( 'Note: Note: This plugin requires a publicly accessible HTTPS domain. Localhost and local development environments are not supported.' ) . '</p>';
     }
 
-    public function wp_rag_ai_chatbot_chatbot_title_callback() {
-        $chatbot_title = get_option( 'wp_rag_ai_chatbot_chatbot_title', 'AI Chatbot' );
-        echo '<input type="text" id="wp_rag_ai_chatbot_chatbot_title" name="wp_rag_ai_chatbot_chatbot_title" value="' . esc_attr( $chatbot_title ) . '" class="regular-text" />';
-        echo '<p class="description">' . esc_html__( 'The title displayed on the chatbot widget header.', 'ai-chatbot-for-support-ecommerce' ) . '</p>';
+    public function acsec_chatbot_chatbot_title_callback() {
+        $chatbot_title = get_option( 'acsec_chatbot_chatbot_title', 'AI Chatbot' );
+        echo '<input type="text" id="acsec_chatbot_chatbot_title" name="acsec_chatbot_chatbot_title" value="' . esc_attr( $chatbot_title ) . '" class="regular-text" />';
+        echo '<p class="description">' . esc_html__( 'The title displayed on the chatbot widget header.', 'ai-chatbot-for-support-e-commerce' ) . '</p>';
     }
     public function node_url_field_callback() {
-        $node_url = get_option( 'wp_rag_ai_chatbot_node_url', 'https://your-rag-node.com/' );
-        echo '<input type="url" id="wp_rag_ai_chatbot_node_url" name="wp_rag_ai_chatbot_node_url" value="' . esc_attr( $node_url ) . '" class="regular-text" required />';
-        echo '<p class="description">' . esc_html__( 'The base URL of your RAG AI Chatbot Node Server.', 'ai-chatbot-for-support-ecommerce' ) . '</p>';
+        $node_url = get_option( 'acsec_chatbot_node_url', 'https://your-rag-node.com/' );
+        echo '<input type="url" id="acsec_chatbot_node_url" name="acsec_chatbot_node_url" value="' . esc_attr( $node_url ) . '" class="regular-text" required />';
+        echo '<p class="description">' . esc_html__( 'The base URL of your AI Chatbot Node Server.', 'ai-chatbot-for-support-e-commerce' ) . '</p>';
     }
 
     public function settings_page_html() {
         // Load the HTML for the admin page
-        $path = WP_RAG_AI_CHATBOT_PLUGIN_DIR . 'views/admin-settings.php';
+        $path = ACSEC_PLUGIN_DIR . 'views/acsec-admin-settings.php';
         if ( file_exists( $path ) ) {
             include $path;
         } else {
@@ -598,7 +599,7 @@ public function wp_rag_ai_create_chatbot_tag() {
 
     // --- NEW HANDLER: Saves AI Model/Provider configuration locally via AJAX ---
     public function handle_ai_config_save() {
-        check_ajax_referer( 'wp-rag-ai-chatbot-save-config', 'security' );
+        check_ajax_referer( 'acsec-chatbot-save-config', 'security' );
         
         if ( ! current_user_can( 'manage_options' ) ) {
             wp_send_json_error( array( 'message' => 'Permission denied.' ) );
@@ -619,9 +620,9 @@ $gemini_model = isset( $_POST['gemini_model'] )
 
 
         // Save the non-key configuration settings
-        update_option( 'wp_rag_ai_chatbot_active_provider', $active_provider );
-        update_option( 'wp_rag_ai_chatbot_openai_model', $openai_model );
-        update_option( 'wp_rag_ai_chatbot_gemini_model', $gemini_model );
+        update_option( 'acsec_chatbot_active_provider', $active_provider );
+        update_option( 'acsec_chatbot_openai_model', $openai_model );
+        update_option( 'acsec_chatbot_gemini_model', $gemini_model );
 
         wp_send_json_success( array( 'message' => 'AI configuration saved locally.' ) );
     }
@@ -632,9 +633,9 @@ $gemini_model = isset( $_POST['gemini_model'] )
      * the Challenge-Response verification flow.
      */
     public function handle_site_register_ajax() {
-        check_ajax_referer( 'wp-rag-ai-chatbot-site-register', 'security' );
+        check_ajax_referer( 'acsec-chatbot-site-register', 'security' );
         // ... (unchanged logic)
-        $node_url = WP_RAG_AI_CHATBOT_NODE_URL;
+        $node_url = ACSEC_NODE_URL;
         if ( empty( $node_url ) ) {
             wp_send_json_error( array( 'message' => 'RAG Node URL is required. Please save it first.' ) );
         }
@@ -666,18 +667,18 @@ $gemini_model = isset( $_POST['gemini_model'] )
     }
 
         // Store the token in a temporary option for the public REST endpoint to serve
-        update_option( 'wp_rag_ai_chatbot_challenge_token_temp', $token, false );
+        update_option( 'acsec_chatbot_challenge_token_temp', $token, false );
 
 
         // ----------------------------------------------------------------------
         // Step 2: Finalize Registration by sending the public verification URL
         // ----------------------------------------------------------------------
         // The public URL the Node server will call to verify ownership
-    // $challenge_verification_url = 'http://lamp-web-1:8000/wooc/index.php?rest_route=/wp-rag-ai-chatbot/v1/challenge-token';// get_rest_url( null, 'wp-rag-ai-chatbot/v1/challenge-token' );
-    $challenge_verification_url = get_rest_url( null, 'wp-rag-ai-chatbot/v1/challenge-token' );
+    // $challenge_verification_url = 'http://lamp-web-1:8000/wooc/index.php?rest_route=/acsec-chatbot/v1/challenge-token';// get_rest_url( null, 'acsec-chatbot/v1/challenge-token' );
+    $challenge_verification_url = get_rest_url( null, 'acsec-chatbot/v1/challenge-token' );
 
     // Result will be something like:
-    // 'https://yourwordpress.com/wp-json/wp-rag-ai-chatbot/v1/challenge-token'
+    // 'https://yourwordpress.com/wp-json/acsec-chatbot/v1/challenge-token'
 
         $payload = [
             'siteName'   => $site_name,
@@ -708,13 +709,13 @@ $gemini_model = isset( $_POST['gemini_model'] )
         // ----------------------------------------------------------------------
 
         // Always delete the temporary challenge token immediately after the attempt
-        delete_option( 'wp_rag_ai_chatbot_challenge_token_temp' );
+        delete_option( 'acsec_chatbot_challenge_token_temp' );
 
 
 
         if ( 200 === $code && ! empty( $body['siteId'] ) && ! empty( $body['apiKey'] ) ) {
-            update_option( 'wp_rag_ai_chatbot_site_id', $body['siteId'] );
-            update_option( 'wp_rag_ai_chatbot_api_key', $body['apiKey'] );
+            update_option( 'acsec_chatbot_site_id', $body['siteId'] );
+            update_option( 'acsec_chatbot_api_key', $body['apiKey'] );
 
             wp_send_json_success( array(
                 'message' => 'Site registered successfully!',
@@ -735,11 +736,11 @@ $gemini_model = isset( $_POST['gemini_model'] )
      * (B) Handles sending user-provided AI keys (e.g., OpenAI, Gemini) and configuration to the Node.
      */
     public function handle_api_keys_ajax() {
-        check_ajax_referer( 'wp-rag-ai-chatbot-send-keys', 'security' );
+        check_ajax_referer( 'acsec-chatbot-send-keys', 'security' );
 
-        $node_url = WP_RAG_AI_CHATBOT_NODE_URL;
-        $site_id  = get_option( 'wp_rag_ai_chatbot_site_id' );
-        $api_key  = get_option( 'wp_rag_ai_chatbot_api_key' ); // Site API Key
+        $node_url = ACSEC_NODE_URL;
+        $site_id  = get_option( 'acsec_chatbot_site_id' );
+        $api_key  = get_option( 'acsec_chatbot_api_key' ); // Site API Key
 
         if ( empty( $node_url ) || empty( $site_id ) || empty( $api_key ) ) {
             wp_send_json_error( array( 'message' => 'Site Registration is incomplete. Cannot send AI keys.' ) );
@@ -755,9 +756,9 @@ $gemini_model = isset( $_POST['gemini_model'] )
         );
 
         // --- Retrieve AI Configuration from Saved Options (saved by handle_ai_config_save) ---
-        $active_provider = get_option( 'wp_rag_ai_chatbot_active_provider', 'gemini' );
-        $openai_model    = get_option( 'wp_rag_ai_chatbot_openai_model', 'gpt-4-turbo' );
-        $gemini_model    = get_option( 'wp_rag_ai_chatbot_gemini_model', 'gemini-2.5-flash-preview-09-2025' );
+        $active_provider = get_option( 'acsec_chatbot_active_provider', 'gemini' );
+        $openai_model    = get_option( 'acsec_chatbot_openai_model', 'gpt-4-turbo' );
+        $gemini_model    = get_option( 'acsec_chatbot_gemini_model', 'gemini-2.5-flash-preview-09-2025' );
 
         // Payload for the RAG Node
         $payload = array(
@@ -788,7 +789,7 @@ $gemini_model = isset( $_POST['gemini_model'] )
         }
 
         // Keys successfully sent, record timestamp
-        update_option( 'wp_rag_ai_chatbot_keys_sent', time() );
+        update_option( 'acsec_chatbot_keys_sent', time() );
         wp_send_json_success( array( 'message' => 'AI keys and configuration sent successfully.' ) );
     }
 
@@ -797,25 +798,24 @@ $gemini_model = isset( $_POST['gemini_model'] )
      * ... (unchanged)
      */
     public function handle_data_push_ajax() {
-        check_ajax_referer( 'wp-rag-ai-chatbot-data-push', 'security' );
+        check_ajax_referer( 'acsec-chatbot-data-push', 'security' );
         // ... (unchanged logic)
-        $node_url = WP_RAG_AI_CHATBOT_NODE_URL;
-        $api_key  = get_option( 'wp_rag_ai_chatbot_api_key' );
+        $node_url = ACSEC_NODE_URL;
+        $api_key  = get_option( 'acsec_chatbot_api_key' );
 
         if ( empty( $node_url ) || empty( $api_key ) ) {
             wp_send_json_error( array( 'message' => 'Please complete Site Registration first.' ) );
         }
 
-$posted_data_types = isset( $_POST['data_types'] )
-    ? sanitize_text_field( wp_unslash( $_POST['data_types'] ) )
-    : [];
+        $posted_data_types = isset( $_POST['data_types'] ) && is_array( $_POST['data_types'] )
+            ? array_map( 'sanitize_text_field', wp_unslash( $_POST['data_types'] ) )
+            : [];
 
-
-
-        if(empty($posted_data_types)){
+        if ( empty( $posted_data_types ) ) {
             wp_send_json_error( array( 'message' => 'Please Select Data Synchronous types!' ) );
         }
-        update_option( 'wp_rag_ai_chatbot_data_push_types', $posted_data_types );// Save selected data types
+
+        update_option( 'acsec_chatbot_data_push_types', $posted_data_types ); // Save selected data types
         
         
         // --- 1. Gather ALL Universal WordPress Data ---
@@ -827,7 +827,7 @@ $posted_data_types = isset( $_POST['data_types'] )
         ];
 
         if(in_array('faqs', $posted_data_types)){
-            $data_to_send['faqs']=$this->fetch_faqs_cpt( 'rag_ai_chatbot_faq' );
+            $data_to_send['faqs']=$this->fetch_faqs_cpt( 'acsec_chatbot_faq' );
             // echo "A";
         }
         if(in_array('pages', $posted_data_types)){
@@ -836,11 +836,11 @@ $posted_data_types = isset( $_POST['data_types'] )
         }
         if(in_array('posts',$posted_data_types) ){
             
-            $data_to_send['posts']=$this->fetch_rag_ai_content_posts();
+            $data_to_send['posts']=$this->fetch_acsec_content_posts();
             // echo "C";
         }
         if(in_array('policies',$posted_data_types)){
-            $data_to_send['policies']=$this->fetch_rag_ai_content_policy_pages();
+            $data_to_send['policies']=$this->fetch_acsec_content_policy_pages();
             // echo "D";
         }
         // --- 2. Conditional WooCommerce Data ---
@@ -934,18 +934,18 @@ $posted_data_types = isset( $_POST['data_types'] )
      * (F) Fetch policy-related pages (e.g., Privacy, Terms).
      */
         /**
-     * (F) Fetches pages specifically designated for RAG AI Content.
+     * (F) Fetches pages specifically designated for AI Chatbot Content.
      * Refinement: Targets pages either by common policy slugs (automated fallback) or
      * a user-defined list of Page IDs (user preference), avoiding the need for taxonomies on pages.
      */
-    private function fetch_rag_ai_content_policy_pages() {
+    private function fetch_acsec_content_policy_pages() {
         $rag_content_data = [];
         
         // --- 1. Define Search Criteria ---
         
         // Placeholder for User-Defined IDs (Assumes this setting will be created in admin-settings.php)
         // In the final plugin, this would be loaded from a setting, e.g.:
-        // $user_ids_setting = get_option('wp_rag_ai_chatbot_rag_page_ids', '');
+        // $user_ids_setting = get_option('acsec_chatbot_rag_page_ids', '');
         $user_ids_setting = ''; // Mock empty string for demonstration
         $target_ids = array_filter( array_map( 'absint', explode( ',', $user_ids_setting ) ) );
 
@@ -1073,38 +1073,41 @@ $posted_data_types = isset( $_POST['data_types'] )
     }
 
         /**
-     * (F) Fetches pages specifically designated for RAG AI Content.
-     * Optimization: Uses a tax_query to filter pages at the database level,
-     * avoiding the loading and iteration of all site pages.
-     * This query runs only on manual admin-triggered data sync,
-    * not on frontend requests, minimizing performance impact.
-
+     * (F) Fetches pages specifically designated for AI Chatbot Content.
+     * Uses tax_query to efficiently filter posts by the 'ai-chatbot-content' tag.
+     * Performance is optimized with:
+     * - Limited posts_per_page (100)
+     * - no_found_rows for faster queries
+     * - fields='ids' to minimize memory usage
+     * - Disabled cache updates for better performance
+     * This runs only during admin data sync, not on frontend requests.
      */
-    private function fetch_rag_ai_content_posts() {
-        
+    private function fetch_acsec_content_posts() {
+
         $rag_content_data = [];
         $rag_term_slug = 'ai-chatbot-content';
 
-$args = array(
-    'post_type'              => 'post',
-    'post_status'            => 'publish',
-    'posts_per_page'         => 100,    // Avoid -1 for performance
-    'no_found_rows'          => true,   // Keeps query fast
-    'fields'                 => 'ids',  // Only fetch IDs
-    'update_post_meta_cache' => false,
-    'update_post_term_cache' => false,
-    'tax_query'              => array(
-        array(
-            'taxonomy'         => 'post_tag',
-            'field'            => 'slug',
-            'terms'            => $rag_term_slug,
-            'include_children' => false, 
-        ),
-    ),
-);
+        $args = array(
+            'post_type'              => 'post',
+            'post_status'            => 'publish',
+            'posts_per_page'         => 100,    // Avoid -1 for performance
+            'no_found_rows'          => true,   // Keeps query fast
+            'fields'                 => 'ids',  // Only fetch IDs initially
+            'update_post_meta_cache' => false,
+            'update_post_term_cache' => false,
+            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+            // tax_query is necessary here to filter posts by specific tag efficiently
+            'tax_query'              => array(
+                array(
+                    'taxonomy'         => 'post_tag',
+                    'field'            => 'slug',
+                    'terms'            => $rag_term_slug,
+                    'include_children' => false,
+                ),
+            ),
+        );
 
-// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-$pages = get_posts( $args );
+        $pages = get_posts( $args );
 
 
         // 3. Process the smaller, filtered result set

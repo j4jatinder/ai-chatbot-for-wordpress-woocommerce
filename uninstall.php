@@ -13,21 +13,21 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 // ----------------------------
 // 1. Delete Plugin Options
 // ----------------------------
-$plugin_options = [
-    'wp_rag_ai_chatbot_site_id',
-    'wp_rag_ai_chatbot_api_key',
-    'wp_rag_ai_chatbot_keys_sent',
-    'wp_rag_ai_chatbot_data_push_types',
-    'wp_rag_ai_chatbot_active_provider',
-    'wp_rag_ai_chatbot_openai_model',
-    'wp_rag_ai_chatbot_gemini_model',
-    'wp_rag_ai_chatbot_current_status',
-    'wp_rag_ai_chatbot_policy_pages',
-    'wp_rag_ai_chatbot_challenge_token_temp',
+$acsec_plugin_options = [
+    'acsec_chatbot_site_id',
+    'acsec_chatbot_api_key',
+    'acsec_chatbot_keys_sent',
+    'acsec_chatbot_data_push_types',
+    'acsec_chatbot_active_provider',
+    'acsec_chatbot_openai_model',
+    'acsec_chatbot_gemini_model',
+    'acsec_chatbot_current_status',
+    'acsec_chatbot_policy_pages',
+    'acsec_chatbot_challenge_token_temp',
 ];
 
-foreach ( $plugin_options as $option ) {
-    delete_option( $option );
+foreach ( $acsec_plugin_options as $acsec_option ) {
+    delete_option( $acsec_option );
 }
 
 // ----------------------------
@@ -36,7 +36,7 @@ foreach ( $plugin_options as $option ) {
 global $wpdb;
 if ( current_user_can( 'manage_options' ) ) {
     // Setting $user_id to 0 and $delete_all to true removes the key for ALL users
-    delete_metadata( 'user', 0, 'wp_rag_ai_chatbot_domain_notice_dismissed', '', true );
+    delete_metadata( 'user', 0, 'acsec_chatbot_domain_notice_dismissed', '', true );
 }
 
 
@@ -44,16 +44,16 @@ if ( current_user_can( 'manage_options' ) ) {
 // ----------------------------
 // 3. Delete CPT content (Optional: skip if testing)
 // ----------------------------
-$delete_cpts = false; // set false to skip CPT deletion
-if ( $delete_cpts ) {
-    $faq_posts = get_posts([
-        'post_type'      => 'wp_rag_ai_chatbot_faq',
+$acsec_delete_cpts = false; // set false to skip CPT deletion
+if ( $acsec_delete_cpts ) {
+    $acsec_faq_posts = get_posts([
+        'post_type'      => 'acsec_chatbot_faq',
         'post_status'    => 'any',
         'numberposts'    => -1,
         'fields'         => 'ids',
     ]);
 
-    foreach ( $faq_posts as $post_id ) {
+    foreach ( $acsec_faq_posts as $post_id ) {
         wp_delete_post( $post_id, true ); // true = force delete (bypass trash)
     }
 }

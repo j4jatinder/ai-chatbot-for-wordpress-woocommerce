@@ -1,7 +1,7 @@
 <?php
 /**
- * RAG AI Chat - REST API Endpoint
- * Defines /wp-json/wp-rag-ai-chatbot/v1/chat endpoint and securely relays messages to Node server.
+ * ACSEC Chat - REST API Endpoint
+ * Defines /wp-json/acsec-chatbot/v1/chat endpoint and securely relays messages to Node server.
  */
 
 // Exit if accessed directly.
@@ -9,30 +9,28 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 
 add_action('rest_api_init', function () {
-    // Existing endpoint for sending chat messages
-    register_rest_route('wp-rag-ai-chatbot/v1', '/api/chat/query', [
+    // Existing endpoint for sending chat messages - PUBLIC endpoint for frontend chat functionality
+    register_rest_route('acsec-chatbot/v1', '/api/chat/query', [
         'methods'  => 'POST',
-        'callback' => 'rag_handle_chat_rest',
-        'permission_callback' => '__return_true',
+        'callback' => 'acsec_handle_chat_rest',
+        'permission_callback' => '__return_true', // Public endpoint - users send chat messages without authentication
     ]);
 
      /**
      * Registers a public, unauthenticated REST API route for the challenge-response.
+     * This endpoint provides the challenge token for Node server verification.
      */
-        // Register the public endpoint to serve the challenge token
-    register_rest_route( 'wp-rag-ai-chatbot/v1', '/challenge-token', array(
-            'methods'  => 'GET',
-            'callback' =>  'get_challenge_token_rest' ,
-            'permission_callback' => '__return_true', // CRITICAL: Makes it unauthenticated and public
-        ) );
-    
-
-
-    // NEW endpoint for fetching chat history
-    register_rest_route('wp-rag-ai-chatbot/v1', '/api/messages', [
+    register_rest_route( 'acsec-chatbot/v1', '/challenge-token', array(
         'methods'  => 'GET',
-        'callback' => 'rag_fetch_chat_history',
-        'permission_callback' => '__return_true',
+        'callback' =>  'acsec_get_challenge_token_rest' ,
+        'permission_callback' => '__return_true', // Public endpoint - required for server-to-server verification
+    ));
+
+    // Endpoint for fetching chat history - PUBLIC endpoint for frontend chat functionality
+    register_rest_route('acsec-chatbot/v1', '/api/messages', [
+        'methods'  => 'GET',
+        'callback' => 'acsec_rag_fetch_chat_history',
+        'permission_callback' => '__return_true', // Public endpoint - users fetch their chat history without authentication
     ]);
 });
 
@@ -42,8 +40,8 @@ add_action('rest_api_init', function () {
      * @param WP_REST_Request $request
      * @return WP_REST_Response
      */
-     function get_challenge_token_rest( WP_REST_Request $request ) {
-        $challenge_token = get_option( 'wp_rag_ai_chatbot_challenge_token_temp', false );
+     function acsec_get_challenge_token_rest( WP_REST_Request $request ) {
+        $challenge_token = get_option( 'acsec_chatbot_challenge_token_temp', false );
 
         if ( $challenge_token ) {
             // Return the token as plain text in the body for easy Node server verification
@@ -57,7 +55,7 @@ add_action('rest_api_init', function () {
 /**
  * Handle incoming chat messages from React frontend.
  */
-function rag_handle_chat_rest(WP_REST_Request $request) {
+function acsec_handle_chat_rest(WP_REST_Request $request) {
 
     // 1️⃣ Verify nonce for CSRF protection
     $nonce = $request->get_header('x-wp-nonce');
@@ -74,8 +72,8 @@ function rag_handle_chat_rest(WP_REST_Request $request) {
     }
 
     // 3️⃣ Fetch Node server configuration from options
-    $node_url    = WP_RAG_AI_CHATBOT_NODE_URL; //get_option('wp_rag_ai_chatbot_node_url');
-    $node_secret = get_option('wp_rag_ai_chatbot_api_key');
+    $node_url    = ACSEC_NODE_URL; //get_option('acsec_chatbot_node_url');
+    $node_secret = get_option('acsec_chatbot_api_key');
     $node_api_url = $node_url.'/api/chat/query';
    
 
@@ -111,11 +109,11 @@ function rag_handle_chat_rest(WP_REST_Request $request) {
     return new WP_REST_Response($body, 200);
 }
 
-function rag_fetch_chat_history(WP_REST_Request $request) {
+function acsec_rag_fetch_chat_history(WP_REST_Request $request) {
 
     $x_session_id = $request->get_header('x-session-id');
-    $node_url    = WP_RAG_AI_CHATBOT_NODE_URL;  //get_option('wp_rag_ai_chatbot_node_url');
-    $node_secret = get_option('wp_rag_ai_chatbot_api_key');
+    $node_url    = ACSEC_NODE_URL;  //get_option('acsec_chatbot_node_url');
+    $node_secret = get_option('acsec_chatbot_api_key');
     $node_api_url = $node_url.'/api/messages';
     
 

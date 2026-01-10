@@ -3,7 +3,7 @@
 Plugin Name: AI Chatbot for Support & E-Commerce
 Plugin URI: https://www.phpsoftsolutions.in/ai-chatbot-for-support-e-commerce/
 Description: An AI-powered chatbot for WordPress and WooCommerce using Retrieval-Augmented Generation (RAG). Train the chatbot on FAQs, pages, posts, and products, and answer customer queries using OpenAI or Gemini AI models.
-Version: 1.0.0
+Version: 1.0.1
 Author: Jatinder Singh
 Author URI: https://www.phpsoftsolutions.in
 License: GPL-2.0-or-later
@@ -21,7 +21,7 @@ $acsec_is_localhost = isset( $_SERVER['HTTP_HOST'] )
     : false;
 
 // Define plugin constants
-define( 'ACSEC_VERSION', '1.0.0' );
+define( 'ACSEC_VERSION', '1.0.1' );
 define( 'ACSEC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ACSEC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 // define('ACSEC_NODE_URL',$acsec_is_localhost ? 'http://backend_env:5000': 'https://ragai.phpsoftsolutions.in'); // Node.js server URL

@@ -21,7 +21,7 @@ $acsec_is_localhost = isset( $_SERVER['HTTP_HOST'] )
     : false;
 
 // Define plugin constants
-define( 'ACSEC_VERSION', '1.0.1' );
+define( 'ACSEC_VERSION', '1.0.2' );
 define( 'ACSEC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ACSEC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 // define('ACSEC_NODE_URL',$acsec_is_localhost ? 'http://backend_env:5000': 'https://ragai.phpsoftsolutions.in'); // Node.js server URL

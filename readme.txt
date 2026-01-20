@@ -4,7 +4,7 @@ Tags: ai chatbot, customer support, ai assistant, gemini ai, openai
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,10 +128,16 @@ Additional features and higher limits may be offered in future versions.
 
 == Changelog ==
 
-= 1.0.0 =
-* Initial public release
+= 1.0.2 =
+* Security: Implemented proper 'permission_callback' for all REST API endpoints to ensure authorized access.
+* Security: Added strict nonce verification and 'manage_options' capability checks to all AJAX handlers.
+* Security: Enhanced 'register_setting' definitions with explicit data types and sanitization callbacks.
+* Security: Implemented allow-list validation for data push content types to prevent unauthorized data storage.
+* Improvement: Added sanitization for custom request headers (x-session-id) and external API requests.
+* Fix: Resolved PHPCS warnings regarding core hooks and optimized taxonomy queries for performance.
 
-== Upgrade Notice ==
+= 1.0.1 =
+* Improved naming and unique identifier for plgin variables and functions.
 
 = 1.0.0 =
-Initial public release.
+* Initial public release.

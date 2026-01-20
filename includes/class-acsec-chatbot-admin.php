@@ -212,8 +212,8 @@ public function register_faq_cpt() {
         );
 
         // register_setting( 'acsec-chatbot-group', 'acsec_chatbot_node_url' );
-        register_setting( 'acsec-chatbot-group', 'acsec_chatbot_site_id', array( 'sanitize_callback' => 'sanitize_text_field' ) );
-        register_setting( 'acsec-chatbot-group', 'acsec_chatbot_api_key', array( 'sanitize_callback' => 'sanitize_text_field' ) );
+        register_setting( 'acsec-chatbot-group', 'acsec_chatbot_site_id', array( 'sanitize_callback' => 'sanitize_text_field', 'type' => 'string' ) );
+        register_setting( 'acsec-chatbot-group', 'acsec_chatbot_api_key', array( 'sanitize_callback' => 'sanitize_text_field', 'type' => 'string' ) );
         register_setting( 'acsec-chatbot-group', 'acsec_chatbot_keys_sent' , array(
         'sanitize_callback' => 'absint',
     )); // Timestamp of last key send
@@ -229,7 +229,7 @@ public function register_faq_cpt() {
     ) );
 
         register_setting( 'acsec-chatbot-group_static', 'acsec_chatbot_chatbot_title',  array(
-        'sanitize_callback' => 'sanitize_text_field',
+        'sanitize_callback' => 'sanitize_text_field', 'type' => 'string'
     ) );
         // 1. Register the new policy pages setting
         register_setting(
@@ -256,10 +256,10 @@ public function register_faq_cpt() {
         'sanitize_callback' => array( $this, 'sanitize_active_provider' ),
     ) );
         register_setting( 'acsec-chatbot-group', 'acsec_chatbot_openai_model',   array(
-        'sanitize_callback' => 'sanitize_text_field',
+        'sanitize_callback' => 'sanitize_text_field',  'type' => 'string'
     ) );
         register_setting( 'acsec-chatbot-group', 'acsec_chatbot_gemini_model',   array(
-        'sanitize_callback' => 'sanitize_text_field',
+        'sanitize_callback' => 'sanitize_text_field', 'type' => 'string'
     ) );
         
 
@@ -310,12 +310,36 @@ public function sanitize_active_provider( $value ) {
 }
 
 
+/**
+ * Sanitize and validate data push content types.
+ *
+ * @param array $input
+ * @return array
+ */
 public function sanitize_data_push_types( $input ) {
+
+    // Allowed values (explicit allow-list)
+    $allowed = array(
+        'pages',
+        'faqs',
+        'posts',
+        'products',
+        'policies',
+    );
+
+    // Ensure array
     if ( ! is_array( $input ) ) {
         return array();
     }
 
-    return array_map( 'sanitize_text_field', $input );
+    // Sanitize each value
+    $input = array_map( 'sanitize_text_field', $input );
+
+    // Keep only allowed values
+    $input = array_intersect( $input, $allowed );
+
+    // Remove duplicates and reindex
+    return array_values( array_unique( $input ) );
 }
 
 // Field Callback (Outputs the switch/checkbox HTML)
@@ -599,11 +623,11 @@ public function acsec_create_chatbot_tag() {
 
     // --- NEW HANDLER: Saves AI Model/Provider configuration locally via AJAX ---
     public function handle_ai_config_save() {
-        check_ajax_referer( 'acsec-chatbot-save-config', 'security' );
-        
         if ( ! current_user_can( 'manage_options' ) ) {
             wp_send_json_error( array( 'message' => 'Permission denied.' ) );
         }
+        check_ajax_referer( 'acsec-chatbot-save-config', 'security' );
+        
 
 
         $active_provider = isset( $_POST['active_provider'] )
@@ -633,6 +657,11 @@ $gemini_model = isset( $_POST['gemini_model'] )
      * the Challenge-Response verification flow.
      */
     public function handle_site_register_ajax() {
+
+        if ( ! current_user_can( 'manage_options' ) ) {
+    wp_send_json_error( array( 'message' => 'Forbidden' ), 403 );
+}
+
         check_ajax_referer( 'acsec-chatbot-site-register', 'security' );
         // ... (unchanged logic)
         $node_url = ACSEC_NODE_URL;
@@ -893,11 +922,13 @@ $gemini_model = isset( $_POST['gemini_model'] )
 
         foreach ( $posts as $post_id ) {
             $post = get_post( $post_id );
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+            $contentV=wp_strip_all_tags( apply_filters( 'the_content', $post->post_content ) );
             $posts_data[] = [
                 'id'       => $post->ID,
                 'type'     => $post->post_type,
                 'title'    => $post->post_title,
-                'content'  => wp_strip_all_tags( apply_filters( 'the_content', $post->post_content ) ),
+                'content'  => $contentV,
                 'url'      => get_permalink( $post->ID ),
             ];
         }
@@ -918,11 +949,14 @@ $gemini_model = isset( $_POST['gemini_model'] )
 
         foreach ( $pages as $page ) {
             if ( false === stripos( $page->post_title, 'policy' ) && false === stripos( $page->post_content, 'privacy policy' ) ) {
-                 $pages_data[] = [
+                 
+                // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+                $contentV = wp_strip_all_tags( apply_filters( 'the_content', $page->post_content ) );
+                $pages_data[] = [
                     'id'       => $page->ID,
                     'type'     => $page->post_type,
                     'title'    => $page->post_title,
-                    'content'  => wp_strip_all_tags( apply_filters( 'the_content', $page->post_content ) ),
+                    'content'  => $contentV,
                     'url'      => get_permalink( $page->ID ),
                 ];
             }
@@ -988,6 +1022,8 @@ $gemini_model = isset( $_POST['gemini_model'] )
         // Process the small, filtered result set (limiting content to 1000 words)
         foreach ( $pages as $page ) {
             // Step A: Get the full content, apply filters (shortcodes), and strip HTML tags.
+
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
             $full_content = wp_strip_all_tags( apply_filters( 'the_content', $page->post_content ) );
 
             // Step B: Limit content to 1000 words for RAG indexing efficiency.
@@ -1020,10 +1056,13 @@ $gemini_model = isset( $_POST['gemini_model'] )
 
         foreach ( $faqs as $faq_id ) {
             $post = get_post( $faq_id );
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+            $contentV = wp_strip_all_tags( apply_filters( 'the_content', $page->post_content ) );
+               
             $faqs_data[] = [
                 'id'       => $post->ID,
                 'title' => $post->post_title,
-                'content'   => wp_strip_all_tags( apply_filters( 'the_content', $post->post_content ) ),
+                'content'   => $contentV,
                 'url'      => get_permalink( $post->ID ),
             ];
         }
@@ -1095,8 +1134,8 @@ $gemini_model = isset( $_POST['gemini_model'] )
             'fields'                 => 'ids',  // Only fetch IDs initially
             'update_post_meta_cache' => false,
             'update_post_term_cache' => false,
-            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
             // tax_query is necessary here to filter posts by specific tag efficiently
+            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
             'tax_query'              => array(
                 array(
                     'taxonomy'         => 'post_tag',
@@ -1113,6 +1152,7 @@ $gemini_model = isset( $_POST['gemini_model'] )
         // 3. Process the smaller, filtered result set
         foreach ( $pages as $page ) {
             // Step A: Get the full content, apply filters (shortcodes), and strip HTML tags.
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
             $full_content = wp_strip_all_tags( apply_filters( 'the_content', $page->post_content ) );
 
             // Step B: Refinement - Limit content to 1000 words for RAG indexing efficiency.

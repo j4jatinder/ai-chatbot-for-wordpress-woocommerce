@@ -431,7 +431,7 @@ input[class*="acsec"]::placeholder,
     /* Adjust main content area to account for fixed footer */
     #acsec-chatbot-root main {
         padding-bottom: 120px !important;
-        margin-bottom: 0 !important;
+        margin-bottom: 80px !important;
     }
 
     /* Ensure input stays visible with keyboard */

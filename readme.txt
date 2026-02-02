@@ -4,7 +4,7 @@ Tags: ai chatbot, customer support, ai assistant, gemini ai, openai
 Requires at least: 6.0
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -127,6 +127,13 @@ Additional features and higher limits may be offered in future versions.
 4. Embedding status and notification
 
 == Changelog ==
+
+= 1.0.3 =
+* Security: Updated REST API permission_callback implementation to explicitly declare public chatbot endpoints in compliance with WordPress.org guidelines.
+* Security: Restricted access to administrative REST endpoints (challenge token) to site administrators only.
+* Security: Removed nonce-only authorization logic from public REST routes.
+* Improvement: Refined anonymous session-based chat handling for public users.
+* Fix: Aligned REST API implementation with plugin review feedback.
 
 = 1.0.2 =
 * Security: Implemented proper 'permission_callback' for all REST API endpoints to ensure authorized access.
